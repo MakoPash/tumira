@@ -1,196 +1,1041 @@
-<!doctype html>
-<html lang="en" class="scroll-smooth">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pastor Pashapa | Spreading the Word in Marondera</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --grace-gold: #D4AF37;
-            --peace-white: #FCFBF7;
-            --faith-dark: #1C1C1C;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--peace-white);
-            color: var(--faith-dark);
-            margin: 0;
-            line-height: 1.6;
-        }
-        .serif { font-family: 'Crimson Pro', serif; }
-        
-        /* Smooth Navigation */
-        .nav-blur {
-            background: rgba(252, 251, 247, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tumira | Zero-Fee Transfers. Zimbabwe to Poland and Back.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
 
-        /* Hero Cross-Fade */
-        .hero-container {
-            position: relative;
-            height: 85vh;
-            overflow: hidden;
-        }
-        .hero-slide {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            background-size: cover;
-            background-position: center;
-        }
-        .hero-slide.active { opacity: 1; }
-        .hero-overlay {
-            background: linear-gradient(to bottom, rgba(28,28,28,0.4), rgba(28,28,28,0.8));
-        }
+:root {
+  --g:#00E584; --gm:#00C97A; --gg:rgba(0,229,132,0.22); --gi:rgba(0,229,132,0.10); --gs:rgba(0,229,132,0.05); --gb:rgba(0,229,132,0.16);
+  --gold:#F5B731; --goldi:rgba(245,183,49,0.10); --goldg:rgba(245,183,49,0.2);
+  --red:#FF5A5A; --blue:#4F8EF7;
+  --bg:#040807; --s1:#080E0A; --s2:#0D1610; --s3:#121D15; --s4:#182318;
+  --border:rgba(255,255,255,0.055); --bg2:rgba(0,229,132,0.15);
+  --tx:#ECF2EC; --tx2:#B8CDB8; --mut:#607860; --mut2:#3A4D3A;
+  --fb:'Sora',sans-serif; --fm:'DM Mono',monospace;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --r:18px; --rsm:12px; --rlg:24px; --rxl:32px; --nav:68px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:var(--nav);}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:15px;line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased;min-height:100vh;}
+a{text-decoration:none;color:inherit;}button{cursor:pointer;font-family:var(--fb);}
+input,select{font-family:var(--fb);}select option{background:var(--s2);}
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.55;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.spotlight{position:fixed;width:900px;height:900px;border-radius:50%;z-index:0;pointer-events:none;top:-300px;left:50%;transform:translateX(-50%);background:radial-gradient(circle,rgba(0,229,132,0.07) 0%,transparent 65%);filter:blur(40px);animation:spotMove 18s ease-in-out infinite alternate;}
+@keyframes spotMove{from{top:-300px;left:30%;}to{top:-200px;left:65%;}}
 
-        /* Call to Action Pulse */
-        .btn-grace {
-            background-color: var(--grace-gold);
-            transition: all 0.3s ease;
-        }
-        .btn-grace:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-        }
-    </style>
+/* NAV */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(4,8,7,0.8);backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border-bottom:1px solid var(--border);transition:background 0.3s;}
+.topnav.scrolled{background:rgba(4,8,7,0.96);}
+.nav-brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.nav-logo{font-size:22px;font-weight:800;letter-spacing:-0.8px;color:var(--tx);}
+.nav-logo span{color:var(--g);}
+.nav-live{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g);background:var(--gi);border:1px solid var(--gb);padding:4px 10px;border-radius:100px;}
+.pdot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:pdot 1.8s ease-in-out infinite;}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.7);}}
+.nav-links{display:none;align-items:center;gap:2px;}
+.nav-link{padding:8px 13px;border-radius:10px;font-size:13px;font-weight:500;color:var(--mut);background:none;border:none;cursor:pointer;transition:all 0.18s;white-space:nowrap;}
+.nav-link:hover{color:var(--tx);background:var(--s3);}
+.nav-link.active{color:var(--g);background:var(--gs);}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-rate-pill{display:none;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--tx2);background:var(--s2);border:1px solid var(--border);padding:6px 13px;border-radius:100px;font-family:var(--fm);}
+.rate-live{width:6px;height:6px;border-radius:50%;background:var(--g);animation:pdot 2s ease-in-out infinite;}
+.btn-nav-post{display:flex;align-items:center;gap:7px;background:var(--g);color:#030806;font-size:13px;font-weight:700;padding:9px 20px;border-radius:100px;border:none;transition:all 0.22s var(--ease);}
+.btn-nav-post:hover{background:#14f096;transform:translateY(-1px);box-shadow:0 6px 28px var(--gg);}
+.btn-icon-nav{width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--mut);transition:all 0.18s;cursor:pointer;}
+.btn-icon-nav:hover{color:var(--tx);background:var(--s3);}
+/* LAYOUT */
+.page-wrap{position:relative;z-index:2;padding-top:var(--nav);}
+.section{display:none;padding:24px 16px 100px;animation:fadeUp 0.28s var(--ease) both;}
+.section.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.desktop-view{display:none;}
+/* HERO */
+.hero{min-height:calc(100svh - var(--nav));display:flex;flex-direction:column;justify-content:center;padding:44px 20px 56px;}
+.hero-inner{max-width:680px;margin:0 auto;text-align:center;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,132,0.06);border:1px solid rgba(0,229,132,0.2);border-radius:100px;padding:6px 16px 6px 10px;margin-bottom:28px;animation:fadeDown 0.7s var(--ease) both;}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:translateY(0);}}
+.pill-icon{width:22px;height:22px;border-radius:50%;background:var(--gi);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;}
+.pill-txt{font-size:12px;font-weight:600;color:var(--g);letter-spacing:0.2px;}
+.hero-title{font-size:clamp(44px,11vw,82px);font-weight:800;line-height:1.0;letter-spacing:-3.5px;margin-bottom:14px;animation:fadeUp 0.7s 0.1s var(--ease) both;}
+.hero-title .g{background:linear-gradient(135deg,var(--g) 0%,#00ffaa 50%,var(--gm) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:inline-block;}
+.hero-sub{font-size:clamp(15px,2.5vw,18px);color:var(--tx2);line-height:1.6;margin-bottom:32px;animation:fadeUp 0.7s 0.2s var(--ease) both;max-width:500px;margin-left:auto;margin-right:auto;}
+.hero-sub strong{color:var(--tx);}
+.problem-strip{display:flex;align-items:center;gap:14px;background:rgba(255,90,90,0.06);border:1px solid rgba(255,90,90,0.18);border-radius:var(--r);padding:16px 20px;margin-bottom:28px;animation:fadeUp 0.7s 0.3s var(--ease) both;text-align:left;}
+.prob-icon{font-size:36px;font-weight:800;color:var(--red);letter-spacing:-2px;line-height:1;flex-shrink:0;font-family:var(--fm);}
+.prob-text{font-size:13px;color:var(--tx2);line-height:1.55;}
+.prob-text strong{color:var(--tx);display:block;margin-bottom:3px;font-weight:700;}
+.hero-ctas{display:flex;flex-direction:column;gap:10px;animation:fadeUp 0.7s 0.4s var(--ease) both;}
+.btn-hero-primary{width:100%;padding:17px;border-radius:var(--r);border:none;background:var(--g);color:#030806;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;transition:all 0.22s var(--ease);}
+.btn-hero-primary:hover{background:#14f096;transform:translateY(-2px);box-shadow:0 10px 40px var(--gg);}
+.btn-hero-secondary{width:100%;padding:17px;border-radius:var(--r);background:var(--s2);border:1px solid var(--border);color:var(--tx);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:9px;transition:all 0.22s var(--ease);}
+.btn-hero-secondary:hover{background:var(--s3);border-color:rgba(255,255,255,0.12);transform:translateY(-1px);}
+.quick-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:26px;animation:fadeUp 0.7s 0.5s var(--ease) both;}
+.qpill{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:100px;background:var(--s2);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--mut);cursor:pointer;transition:all 0.18s var(--ease);white-space:nowrap;}
+.qpill:hover{color:var(--g);border-color:var(--gb);background:var(--gs);}
+.rate-ticker{display:flex;align-items:center;justify-content:center;margin-top:20px;animation:fadeUp 0.7s 0.6s var(--ease) both;}
+.rt-inner{display:inline-flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:100px;padding:8px 18px;font-size:12px;color:var(--tx2);}
+.rt-rate{font-family:var(--fm);color:var(--tx);font-weight:500;}
+.rt-badge{font-size:11px;font-weight:700;color:var(--g);background:var(--gi);padding:3px 10px;border-radius:100px;border:1px solid var(--gb);}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.stat-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:20px 18px;position:relative;overflow:hidden;transition:all 0.22s var(--ease);}
+.stat-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(0,229,132,0.04),transparent 60%);pointer-events:none;}
+.stat-card:hover{border-color:var(--gb);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3);}
+.stat-num{font-size:28px;font-weight:800;color:var(--g);letter-spacing:-1px;line-height:1;margin-bottom:4px;}
+.stat-lbl{font-size:11px;color:var(--mut);font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+/* HIW */
+.hiw-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;}
+.hiw-head{padding:28px 24px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(0,229,132,0.04) 0%,transparent 60%);}
+.hiw-title{font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
+.hiw-sub{font-size:13px;color:var(--tx2);line-height:1.6;}
+.who-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);}
+.who{padding:20px 24px;transition:background 0.18s;}
+.who:first-child{border-right:1px solid var(--border);}
+.who:hover{background:var(--s2);}
+.who-flag{font-size:28px;margin-bottom:8px;}
+.who-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--g);margin-bottom:5px;}
+.who-desc{font-size:12px;color:var(--tx2);line-height:1.5;}
+.steps-list{padding:20px 24px 24px;}
+.step{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.step:last-child{border-bottom:none;}
+.step-num-col{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--gi);border:1px solid var(--gb);color:var(--g);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.step-line{width:1px;flex:1;background:var(--border);margin-top:6px;min-height:12px;}
+.step:last-child .step-line{display:none;}
+.step-body{flex:1;padding-top:4px;}
+.step-h{font-size:14px;font-weight:700;margin-bottom:3px;}
+.step-p{font-size:12px;color:var(--tx2);line-height:1.55;}
+.step-p strong{color:var(--tx);}
+/* CALC */
+.calc-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;}
+.calc-head{padding:24px 24px 20px;background:linear-gradient(135deg,rgba(0,229,132,0.04) 0%,transparent 60%);border-bottom:1px solid var(--border);}
+.calc-title{font-size:18px;font-weight:800;letter-spacing:-0.4px;margin-bottom:4px;}
+.calc-sub{font-size:12px;color:var(--tx2);}
+.calc-body{padding:24px;}
+.calc-field{display:flex;align-items:center;gap:12px;background:var(--s2);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;transition:border-color 0.18s;}
+.calc-field:focus-within{border-color:var(--g);}
+.cf-flag{font-size:22px;flex-shrink:0;}
+.cf-input{flex:1;background:none;border:none;outline:none;color:var(--tx);font-size:22px;font-weight:800;letter-spacing:-0.5px;min-width:0;}
+.cf-input::placeholder{color:var(--mut2);}
+.cf-code{font-family:var(--fm);font-size:13px;font-weight:500;color:var(--mut);flex-shrink:0;background:var(--s3);padding:4px 10px;border-radius:8px;border:1px solid var(--border);}
+.calc-mid{display:flex;justify-content:center;align-items:center;padding:8px 0;}
+.swap-btn{width:40px;height:40px;border-radius:50%;background:var(--s3);border:1px solid var(--border);color:var(--tx2);display:flex;align-items:center;justify-content:center;transition:all 0.2s var(--ease);cursor:pointer;}
+.swap-btn:hover{color:var(--g);border-color:var(--gb);background:var(--gs);transform:rotate(180deg);}
+.calc-foot{padding:14px 24px 20px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);}
+.calc-rate-note{font-size:11px;color:var(--mut);font-family:var(--fm);}
+.zero-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--g);background:var(--gi);padding:4px 10px;border-radius:100px;border:1px solid var(--gb);}
+/* BOARD */
+.board-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+.board-title{font-size:20px;font-weight:800;letter-spacing:-0.4px;}
+.board-notice{display:flex;gap:12px;align-items:flex-start;background:rgba(0,229,132,0.04);border:1px solid rgba(0,229,132,0.14);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;font-size:12px;color:var(--tx2);line-height:1.5;}
+.bn-title{font-size:12px;font-weight:700;color:var(--g);margin-bottom:3px;}
+.bn-body strong{color:var(--tx);}
+.filters{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.filter-pill{display:flex;align-items:center;gap:5px;white-space:nowrap;padding:7px 14px;border-radius:100px;background:var(--s2);border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--mut);cursor:pointer;transition:all 0.18s;flex-shrink:0;}
+.filter-pill.active{color:var(--g);border-color:var(--gb);background:var(--gs);}
+.filter-pill:hover:not(.active){color:var(--tx);background:var(--s3);}
+/* Request cards */
+.rc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:10px;position:relative;overflow:hidden;animation:cardIn 0.35s var(--ease) both;transition:all 0.22s var(--ease);}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.rc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gm);border-radius:3px 0 0 3px;opacity:0.7;}
+.rc.type-pln::before{background:var(--blue);}
+.rc.has-match{border-color:rgba(0,229,132,0.2);}
+.rc.demo{opacity:0.82;}
+.rc:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.35);}
+.rc.has-match:hover{border-color:rgba(0,229,132,0.28);box-shadow:0 12px 32px rgba(0,229,132,0.1);}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;}
+.rc-user{display:flex;align-items:center;gap:11px;}
+.avatar{width:38px;height:38px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;letter-spacing:-0.5px;}
+.rc-name{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.rc-meta{font-size:11px;color:var(--mut);margin-top:1px;display:flex;align-items:center;gap:6px;}
+.trust-tag{font-size:10px;font-weight:700;color:var(--gold);background:var(--goldi);padding:2px 7px;border-radius:100px;border:1px solid rgba(245,183,49,0.15);}
+.demo-tag{font-size:9px;font-weight:800;letter-spacing:0.7px;text-transform:uppercase;color:var(--gold);background:var(--goldi);border:1px solid rgba(245,183,49,0.22);padding:2px 7px;border-radius:100px;}
+.rc-amounts{display:flex;align-items:center;gap:14px;margin-bottom:13px;}
+.ra{flex:1;}
+.ra-big{font-size:22px;font-weight:800;letter-spacing:-0.5px;line-height:1.1;}
+.ra-cur{font-size:11px;color:var(--mut);margin-top:2px;}
+.ra-rem{display:inline-block;font-size:10px;font-weight:700;color:var(--gold);background:var(--goldi);border:1px solid rgba(245,183,49,0.15);padding:2px 8px;border-radius:100px;margin-top:5px;}
+.ra-arrow{color:var(--mut2);font-size:16px;flex-shrink:0;}
+.rc-locs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.loc-pill{display:flex;align-items:center;gap:4px;background:var(--s2);border:1px solid var(--border);padding:3px 9px;border-radius:100px;font-size:11px;font-weight:500;color:var(--mut);}
+.loc-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.match-strip{background:linear-gradient(120deg,rgba(0,229,132,0.08),rgba(0,229,132,0.03));border:1px solid rgba(0,229,132,0.18);border-radius:10px;padding:10px 13px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.ms-label{font-size:12px;font-weight:700;color:var(--g);}
+.ms-sub{font-size:11px;color:var(--mut);margin-top:1px;}
+.rc-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.btn-sm{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:7px 14px;border-radius:100px;border:none;cursor:pointer;transition:all 0.17s;text-decoration:none;}
+.btn-sm-green{background:var(--g);color:#030806;}
+.btn-sm-green:hover{background:#14f096;}
+.btn-sm-outline{background:var(--gs);color:var(--g);border:1px solid rgba(0,229,132,0.2);}
+.btn-sm-outline:hover{background:var(--gi);}
+.btn-sm-ghost{background:var(--s2);color:var(--mut);border:1px solid var(--border);}
+.btn-sm-ghost:hover{color:var(--tx);}
+.btn-sm-red{background:rgba(255,90,90,0.08);color:var(--red);border:1px solid rgba(255,90,90,0.16);}
+.btn-sm-red:hover{background:rgba(255,90,90,0.16);}
+.empty-state{text-align:center;padding:48px 20px;color:var(--mut);}
+.empty-icon{width:52px;height:52px;background:var(--s2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;}
+.empty-state h3{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:6px;}
+.empty-state p{font-size:13px;line-height:1.6;}
+/* FORM */
+.form-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--rlg);overflow:hidden;}
+.form-header{padding:26px 24px 20px;background:linear-gradient(135deg,rgba(0,229,132,0.04) 0%,transparent 60%);border-bottom:1px solid var(--border);}
+.form-h{font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+.form-sub{font-size:13px;color:var(--tx2);line-height:1.55;}
+.form-body{padding:22px 24px 24px;}
+.what-happens{background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:14px;margin-bottom:18px;}
+.wh-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mut2);margin-bottom:10px;}
+.wh-step{display:flex;gap:9px;align-items:flex-start;padding:5px 0;}
+.wh-n{width:20px;height:20px;border-radius:50%;flex-shrink:0;background:var(--gs);color:var(--g);border:1px solid rgba(0,229,132,0.2);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.wh-t{font-size:12px;color:var(--tx2);line-height:1.45;}
+.wh-t strong{color:var(--tx);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-grid.one{grid-template-columns:1fr;}
+.form-field{display:flex;flex-direction:column;gap:4px;}
+.form-field label{font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--mut2);}
+.form-field input,.form-field select{background:var(--s2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--tx);font-size:14px;outline:none;transition:border-color 0.18s;width:100%;-webkit-appearance:none;appearance:none;}
+.form-field input:focus,.form-field select:focus{border-color:var(--g);}
+.form-notice{background:var(--goldi);border:1px solid rgba(245,183,49,0.15);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--tx2);line-height:1.6;margin:13px 0;}
+.form-actions{display:flex;gap:8px;}
+.btn-form-primary{flex:2;padding:14px;border-radius:12px;background:var(--g);color:#030806;font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all 0.2s var(--ease);}
+.btn-form-primary:hover{background:#14f096;transform:translateY(-1px);box-shadow:0 8px 28px var(--gg);}
+.btn-form-ghost{flex:1;padding:14px;border-radius:12px;background:var(--s2);color:var(--mut);font-size:14px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;}
+.btn-form-ghost:hover{color:var(--tx);}
+/* CARD */
+.card-promo{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--s2) 0%,rgba(0,229,132,0.06) 60%,rgba(0,229,132,0.02) 100%);border:1px solid rgba(0,229,132,0.16);border-radius:var(--rxl);padding:32px 24px;margin-bottom:12px;}
+.card-glow-t{position:absolute;width:300px;height:300px;top:-100px;right:-80px;background:radial-gradient(circle,rgba(0,229,132,0.12),transparent 65%);pointer-events:none;}
+.card-glow-b{position:absolute;width:200px;height:200px;bottom:-80px;left:-50px;background:radial-gradient(circle,rgba(245,183,49,0.07),transparent 65%);pointer-events:none;}
+.cp-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);display:block;margin-bottom:10px;}
+.cp-h{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:10px;}
+.cp-p{font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:20px;}
+.card-phases{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
+.cphase{background:rgba(0,0,0,0.25);border:1px solid rgba(0,229,132,0.12);border-radius:var(--r);padding:16px;text-align:left;}
+.cphase-n{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--g);margin-bottom:5px;}
+.cphase-t{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px;}
+.cphase-p{font-size:11px;color:var(--tx2);line-height:1.6;}
+.wl-form{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.wl-input{background:rgba(0,0,0,0.3);border:1.5px solid var(--border);border-radius:100px;padding:14px 22px;color:var(--tx);font-size:14px;font-family:var(--fb);outline:none;text-align:center;transition:border-color 0.18s;}
+.wl-input:focus{border-color:var(--g);}
+.btn-gold{padding:14px;border-radius:100px;border:none;background:var(--gold);color:#0A0F0D;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-gold:hover{background:#ffc94a;transform:translateY(-1px);box-shadow:0 8px 28px var(--goldg);}
+.perks{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+.perk{font-size:11px;font-weight:600;color:var(--g);background:var(--gs);border:1px solid rgba(0,229,132,0.15);padding:4px 12px;border-radius:100px;}
+.progress-card{background:var(--s1);border:1px solid rgba(245,183,49,0.13);border-radius:var(--r);padding:22px;margin-bottom:12px;}
+.prog-h{font-size:18px;font-weight:800;color:var(--gold);margin-bottom:6px;}
+.prog-p{font-size:13px;color:var(--tx2);line-height:1.65;margin-bottom:16px;}
+.progress-bar{background:var(--s2);border-radius:100px;height:5px;overflow:hidden;margin-bottom:6px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--gold));border-radius:100px;transition:width 1.2s var(--ease);}
+.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:16px;}
+/* VISION */
+.vision-card{background:linear-gradient(135deg,var(--s2) 0%,var(--s1) 60%);border:1px solid var(--border);border-radius:var(--rxl);padding:32px 24px;position:relative;overflow:hidden;}
+.vision-glow{position:absolute;width:400px;height:400px;bottom:-150px;right:-100px;background:radial-gradient(circle,rgba(0,229,132,0.07),transparent 65%);pointer-events:none;}
+.vision-eyebrow{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:10px;}
+.vision-h{font-size:clamp(22px,4vw,30px);font-weight:800;letter-spacing:-1px;line-height:1.1;margin-bottom:14px;}
+.vision-p{font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:24px;}
+.vision-phases{display:flex;flex-direction:column;gap:20px;margin-bottom:20px;}
+.vphase{display:flex;gap:16px;align-items:flex-start;}
+.vphase-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;position:relative;}
+.vp-live{background:var(--g);box-shadow:0 0 12px var(--g);}
+.vp-live::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(0,229,132,0.3);animation:pingOut 2s ease-out infinite;}
+@keyframes pingOut{0%{transform:scale(0.8);opacity:0.8;}100%{transform:scale(2.5);opacity:0;}}
+.vp-next{background:var(--gold);}
+.vp-future{background:var(--mut2);}
+.vphase-h{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.vphase-p{font-size:13px;color:var(--tx2);line-height:1.6;}
+.tag-live{font-size:9px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--g);background:var(--gi);border:1px solid var(--gb);padding:2px 8px;border-radius:100px;}
+.tag-soon{font-size:9px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;color:var(--gold);background:var(--goldi);border:1px solid rgba(245,183,49,0.2);padding:2px 8px;border-radius:100px;}
+/* MOBILE TABS */
+.mobile-tabs{position:fixed;bottom:0;left:0;right:0;z-index:150;background:rgba(4,8,7,0.96);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-top:1px solid var(--border);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
+.mtab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 4px;border:none;background:none;color:var(--mut);font-family:var(--fb);font-size:10px;font-weight:600;cursor:pointer;transition:color 0.2s;-webkit-tap-highlight-color:transparent;}
+.mtab.active{color:var(--g);}
+.mtab svg{transition:transform 0.2s var(--ease);}
+.mtab.active svg{transform:scale(1.12);}
+.mtab-badge{position:absolute;top:-2px;right:-4px;background:var(--g);color:#030806;font-size:8px;font-weight:800;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mtab-icon{position:relative;display:inline-flex;}
+/* WA FAB */
+.wa-fab{position:fixed;bottom:76px;right:16px;z-index:140;display:flex;flex-direction:column;align-items:center;gap:5px;text-decoration:none;animation:waPop 0.5s 1.2s var(--ease) both;}
+@keyframes waPop{from{opacity:0;transform:scale(0.4);}to{opacity:1;transform:scale(1);}}
+.wa-btn{width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(37,211,102,0.38);transition:all 0.22s var(--ease);animation:waRing 3.5s 3s ease-in-out infinite;}
+@keyframes waRing{0%,100%{box-shadow:0 6px 22px rgba(37,211,102,0.38);}50%{box-shadow:0 6px 22px rgba(37,211,102,0.38),0 0 0 9px rgba(37,211,102,0.08);}}
+.wa-fab:hover .wa-btn{transform:scale(1.08);}
+.wa-btn svg{width:26px;height:26px;fill:white;}
+.wa-lbl{background:var(--s2);border:1px solid var(--border);border-radius:100px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--tx);white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+/* MODALS */
+.modal-bg{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.75);backdrop-filter:blur(12px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.22s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal-sheet{width:100%;background:var(--s2);border-radius:28px 28px 0 0;border-top:1px solid var(--border);padding:22px 20px 36px;transform:translateY(100%);transition:transform 0.32s var(--ease);max-height:90vh;overflow-y:auto;}
+.modal-bg.open .modal-sheet{transform:translateY(0);}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 20px;}
+.modal-title{font-size:20px;font-weight:800;letter-spacing:-0.4px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{width:34px;height:34px;border-radius:50%;background:var(--s3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mut);transition:color 0.15s;}
+.modal-close:hover{color:var(--tx);}
+/* TOAST */
+#toast-root{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:340px;}
+.toast{background:var(--s3);border:1px solid var(--border);border-radius:100px;padding:10px 20px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.4);animation:toastIn 0.28s var(--ease);text-align:center;}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.toast.ok{border-color:rgba(0,229,132,0.3);color:var(--g);}
+.toast.err{border-color:rgba(255,90,90,0.3);color:var(--red);}
+/* ADMIN */
+.admin-gate{margin:0 16px 40px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.admin-gate-title{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--mut2);margin-bottom:12px;}
+.admin-row{display:flex;gap:7px;}
+.admin-row input{flex:1;background:var(--s2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--tx);font-family:var(--fb);font-size:13px;outline:none;transition:border-color 0.18s;}
+.admin-row input:focus{border-color:var(--g);}
+.btn-admin{background:var(--s2);color:var(--mut);border:1px solid var(--border);font-family:var(--fb);font-size:12px;font-weight:600;padding:9px 14px;border-radius:9px;cursor:pointer;transition:color 0.15s;}
+.btn-admin:hover{color:var(--tx);}
+.admin-dash{display:none;}
+.admin-dash.open{display:block;}
+.admin-stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:14px;}
+.asc{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:12px 13px;}
+.asc-n{font-size:20px;font-weight:800;color:var(--g);}
+.asc-l{font-size:10px;color:var(--mut);margin-top:2px;}
+.admin-table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{text-align:left;padding:7px 9px;font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--mut2);border-bottom:1px solid var(--border);white-space:nowrap;}
+td{padding:9px;border-bottom:1px solid rgba(255,255,255,0.024);color:var(--mut);vertical-align:middle;white-space:nowrap;}
+td.bold{color:var(--tx);font-weight:600;}
+.status-badge{display:inline-block;padding:2px 7px;border-radius:100px;font-size:9px;font-weight:700;}
+.sb-active{background:var(--gs);color:var(--g);}
+.sb-done{background:rgba(79,142,247,0.1);color:#4F8EF7;}
+.sb-flagged{background:rgba(255,90,90,0.1);color:var(--red);}
+/* REVEAL — desktop only; mobile always visible */
+.reveal{opacity:1;transform:none;}
+@media(min-width:900px){
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity 0.7s var(--ease),transform 0.7s var(--ease);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+}
+/* vision phase content wrapper */
+.vphase-content{flex:1;}
+/* DESKTOP */
+@media(min-width:900px){
+  .nav-links{display:flex;}
+  .nav-rate-pill{display:flex;}
+  .wa-fab{display:flex;}
+  .wa-fab{bottom:24px;right:24px;}
+  .mobile-tabs{display:none;}
+  .section{display:none !important;}
+  .desktop-view{display:block;}
+  .page-content{max-width:860px;margin:0 auto;padding:0 40px 80px;}
+  .hero{min-height:calc(100svh - var(--nav));}
+  .hero-inner{max-width:720px;}
+  .hero-ctas{flex-direction:row;}
+  .btn-hero-primary{flex:1.5;width:auto;}
+  .btn-hero-secondary{flex:1;width:auto;}
+  .stats-row{grid-template-columns:repeat(4,1fr);}
+  .who-row{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr 1fr;}
+  .vision-phases{flex-direction:row;}
+  .vphase{flex:1;}
+  .card-phases{grid-template-columns:1fr 1fr;}
+  .page-content > div{scroll-margin-top:calc(var(--nav) + 24px);}
+}
+@media(max-width:480px){
+  .form-grid{grid-template-columns:1fr;}
+  .who:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  .card-phases{grid-template-columns:1fr;}
+  .topnav{padding:0 16px;}
+  .nav-live{display:none;}
+}
+
+</style>
 </head>
 <body>
 
-    <nav class="nav-blur fixed w-full top-0 z-[1000] px-6 py-4 lg:px-20 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <img src="https://i.imgur.com/Gxj0Xmi.jpeg" alt="Pastor Pashapa Logo" class="h-12 w-12 rounded-full border-2 border-[#D4AF37]">
-            <span class="serif font-bold text-xl tracking-tight">Pastor Pashapa</span>
-        </div>
-        <div class="hidden md:flex gap-8 text-xs uppercase tracking-[2px] font-semibold">
-            <a href="#home" class="hover:text-[#D4AF37] transition-colors">The Word</a>
-            <a href="#about" class="hover:text-[#D4AF37] transition-colors">Mission</a>
-            <a href="#gallery" class="hover:text-[#D4AF37] transition-colors">Community</a>
-            <a href="#contact" class="hover:text-[#D4AF37] transition-colors">Contact</a>
-        </div>
-        <a href="https://wa.me/263773196614" class="btn-grace text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Connect</a>
-    </nav>
+<canvas id="bg-canvas"></canvas>
+<div class="spotlight"></div>
 
-    <header id="home" class="hero-container">
-        <div class="hero-slide active" style="background-image: url('https://i.imgur.com/AJU01Ee.jpeg');"></div>
-        <div class="hero-slide" style="background-image: url('https://i.imgur.com/J7oJWet.jpeg');"></div>
-        <div class="hero-slide" style="background-image: url('https://i.imgur.com/nz1j4pQ.jpeg');"></div>
-        <div class="hero-slide" style="background-image: url('https://i.imgur.com/tnr3PT5.jpeg');"></div>
+<header class="topnav" id="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">Tum<span>ira</span></div>
+    <div class="nav-live"><div class="pdot"></div>Live Now</div>
+  </div>
+  <nav class="nav-links">
+    <button class="nav-link active" onclick="navTo('s-hero',this)">Home</button>
+    <button class="nav-link" onclick="navTo('s-how',this)">How It Works</button>
+    <button class="nav-link" onclick="navTo('s-calc',this)">Calculator</button>
+    <button class="nav-link" onclick="navTo('s-board',this)">Live Board</button>
+    <button class="nav-link" onclick="navTo('s-card',this)">Tumira Card</button>
+    <button class="nav-link" onclick="navTo('s-vision',this)">Vision</button>
+  </nav>
+  <div class="nav-right">
+    <div class="nav-rate-pill"><div class="rate-live"></div><span class="js-rate-val">1 USD = 3.50 PLN</span></div>
+    <button class="btn-icon-nav" onclick="openProfile()" aria-label="Profile">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><circle cx="9" cy="6.5" r="3"/><path d="M2.5 16c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke-linecap="round"/></svg>
+    </button>
+    <button class="btn-nav-post" onclick="goPost()">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" width="11" height="11"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>
+      Post Now
+    </button>
+  </div>
+</header>
 
-        <div class="hero-overlay absolute inset-0 z-10 flex items-center justify-center text-center px-6">
-            <div class="max-w-3xl">
-                <p class="text-[#D4AF37] serif italic text-xl md:text-2xl mb-6">
-                    "Delight yourself in the Lord always, and He will give you the desires of your heart."
-                </p>
-                <h1 class="serif text-5xl md:text-7xl text-white font-bold mb-8">
-                    Walking in Faith,<br>Serving Marondera
-                </h1>
-                <div class="h-1 w-24 bg-[#D4AF37] mx-auto mb-8"></div>
-                <a href="#about" class="inline-block border-2 border-white text-white px-10 py-4 text-xs font-bold uppercase tracking-[3px] hover:bg-white hover:text-black transition-all">Learn More</a>
-            </div>
-        </div>
-    </header>
+<div class="page-wrap">
+  <div class="section active" id="mob-home" style="padding-top:28px;"><div id="m-hero"></div><div id="m-stats"></div><div id="m-hiw"></div></div>
+  <div class="section" id="mob-calc"><div id="m-calc"></div></div>
+  <div class="section" id="mob-board"><div id="m-board"></div></div>
+  <div class="section" id="mob-post"><div id="m-post"></div></div>
+  <div class="section" id="mob-more"><div id="m-card"></div><div id="m-vision"></div></div>
 
-    <section id="about" class="py-24 px-6 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-        <div>
-            <span class="text-[#D4AF37] font-bold uppercase tracking-[4px] text-xs">Our Higher Purpose</span>
-            <h2 class="serif text-4xl md:text-5xl font-bold mt-4 mb-6">Making a Difference Through Christ</h2>
-            <p class="text-gray-600 mb-6 text-lg">
-                Pastor Pashapa is dedicated to the spiritual growth of Marondera. By spreading the transformative power of God's word, he seeks to build a community rooted in love, compassion, and unwavering faith.
-            </p>
-            <p class="text-gray-600 mb-8">
-                Through local outreach, mentorship, and biblical teaching, our ministry focuses on bringing the light of Christ to every home, ensuring that no one walks their journey alone.
-            </p>
-            <div class="border-l-4 border-[#D4AF37] pl-6 py-2 italic text-gray-500">
-                "His mission is simple: to make the love of Jesus known and felt in every corner of our city."
-            </div>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-            <img src="https://i.imgur.com/iTKfzWb.jpeg" class="rounded-lg shadow-xl mt-8">
-            <img src="https://i.imgur.com/0M9KBe3.jpeg" class="rounded-lg shadow-xl">
-        </div>
-    </section>
+  <div class="desktop-view">
+    <div class="page-content">
+      <div id="s-hero"></div>
+      <div id="s-how" style="margin-bottom:40px;"></div>
+      <div id="s-calc" style="margin-bottom:40px;"></div>
+      <div id="s-board" style="margin-bottom:40px;"></div>
+      <div id="s-post" style="margin-bottom:40px;"></div>
+      <div id="s-card" style="margin-bottom:40px;"></div>
+      <div id="s-vision" style="margin-bottom:40px;"></div>
+    </div>
+  </div>
 
-    <section class="bg-[#f2eee3] py-24 px-6 lg:px-20">
-        <div class="text-center mb-16">
-            <h2 class="serif text-4xl font-bold mb-4">How We Serve</h2>
-            <div class="h-1 w-16 bg-[#D4AF37] mx-auto"></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
-                <div class="text-3xl mb-6">📖</div>
-                <h3 class="serif text-2xl font-bold mb-4">Word Study</h3>
-                <p class="text-sm text-gray-500">Deep diving into the scriptures to find guidance for modern living.</p>
-            </div>
-            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
-                <div class="text-3xl mb-6">🙏</div>
-                <h3 class="serif text-2xl font-bold mb-4">Community Prayer</h3>
-                <p class="text-sm text-gray-500">Lifting our hearts together to intercede for our families and our nation.</p>
-            </div>
-            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
-                <div class="text-3xl mb-6">🤝</div>
-                <h3 class="serif text-2xl font-bold mb-4">Marondera Outreach</h3>
-                <p class="text-sm text-gray-500">Practical support and spiritual counseling for those in need.</p>
-            </div>
-        </div>
-    </section>
+  <nav class="mobile-tabs">
+    <button class="mtab active" id="mtab-home" onclick="switchMobileTab('home')">
+      <span class="mtab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M2 10L10 3l8 7"/><path d="M5 10v7h4v-4h2v4h4v-7"/></svg></span>
+      Home
+    </button>
+    <button class="mtab" id="mtab-calc" onclick="switchMobileTab('calc')">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 10h6M10 7v6"/></svg>
+      Rates
+    </button>
+    <button class="mtab" id="mtab-board" onclick="switchMobileTab('board')">
+      <span class="mtab-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 7h6M7 10h4M7 13h5"/></svg><span class="mtab-badge" id="mobileBadge">0</span></span>
+      Board
+    </button>
+    <button class="mtab" id="mtab-post" onclick="switchMobileTab('post')">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><line x1="10" y1="3" x2="10" y2="17"/><line x1="3" y1="10" x2="17" y2="10"/></svg>
+      Post
+    </button>
+    <button class="mtab" id="mtab-more" onclick="switchMobileTab('more')">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><circle cx="10" cy="10" r="7"/><path d="M10 7v3l2 2"/></svg>
+      More
+    </button>
+  </nav>
 
-    <section id="gallery" class="py-24 px-6 lg:px-20">
-        <h2 class="serif text-center text-4xl font-bold mb-16">Ministry Moments</h2>
-        <div class="columns-1 md:columns-3 gap-4 space-y-4">
-            <img src="https://i.imgur.com/AJU01Ee.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-            <img src="https://i.imgur.com/J7oJWet.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-            <img src="https://i.imgur.com/nz1j4pQ.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-            <img src="https://i.imgur.com/tnr3PT5.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-            <img src="https://i.imgur.com/iTKfzWb.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-            <img src="https://i.imgur.com/0M9KBe3.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
-        </div>
-    </section>
+  <a class="wa-fab" href="https://wa.me/48452069627" target="_blank" rel="noopener">
+    <div class="wa-btn">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.84.49 3.56 1.34 5.06L2 22l5.1-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.4 14.7c-.23.65-1.35 1.26-1.85 1.3-.48.04-.93.23-3.14-.66-2.64-1.05-4.34-3.72-4.47-3.9-.13-.17-1.05-1.4-1.05-2.66s.66-1.89.9-2.15c.23-.26.5-.32.68-.32l.48.01c.16 0 .36-.06.56.43.23.52.77 1.87.84 2.01.07.14.11.3.02.46-.1.17-.14.28-.27.42-.13.15-.27.34-.39.45-.13.13-.27.27-.12.53.16.26.68 1.12 1.46 1.81 1 .9 1.85 1.17 2.11 1.3.26.13.42.11.56-.06.16-.18.65-.76.83-1.02.17-.26.34-.21.57-.13.23.08 1.45.69 1.7.81.25.13.42.19.48.29.07.1.07.61-.16 1.27z"/></svg>
+    </div>
+    <div class="wa-lbl">Talk to founder</div>
+  </a>
+</div>
 
-    <section id="contact" class="py-24 px-6 lg:px-20 bg-[#1C1C1C] text-white text-center">
-        <h2 class="serif text-5xl font-bold mb-8">Join Our Fellowship</h2>
-        <p class="text-gray-400 mb-12 max-w-2xl mx-auto text-lg">
-            Whether you need prayer, guidance, or simply want to learn more about Christ, Pastor Pashapa is here for you in Marondera.
-        </p>
-        <div class="flex flex-col md:flex-row justify-center gap-6 mb-12">
-            <a href="https://wa.me/263773196614" class="bg-[#25D366] text-white px-10 py-4 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-transform">
-                <span>WhatsApp Pastor</span>
-            </a>
-            <a href="tel:+263773196614" class="bg-white text-black px-10 py-4 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-transform">
-                <span>Call Directly</span>
-            </a>
-        </div>
-        <p class="text-[#D4AF37] serif italic text-xl">"God bless you and keep you."</p>
-    </section>
+<div class="modal-bg" id="profileModal" onclick="closeBG(event,'profileModal')">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div class="modal-title">Profile<button class="modal-close" onclick="closeModal('profileModal')"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/></svg></button></div>
+    <div id="profileBody"></div>
+  </div>
+</div>
+<div class="modal-bg" id="matchModal" onclick="closeBG(event,'matchModal')">
+  <div class="modal-sheet"><div class="modal-handle"></div>
+    <div class="modal-title">Match Found<button class="modal-close" onclick="closeModal('matchModal')"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="1" y1="1" x2="13" y2="13"/><line x1="13" y1="1" x2="1" y2="13"/></svg></button></div>
+    <div id="matchBody"></div>
+  </div>
+</div>
+<div id="toast-root"></div>
+<div class="admin-gate" id="adminGate" style="display:none;"><div class="admin-gate-title">Admin Access</div><div class="admin-row"><input type="password" id="adminPw" placeholder="Password" onkeydown="if(event.key==='Enter')adminLogin()"><button class="btn-admin" onclick="adminLogin()">Enter</button></div></div>
+<div class="admin-dash" id="adminDash"><div style="padding:0 16px 80px" id="adminContent"></div></div>
 
-    <footer class="py-12 px-6 lg:px-20 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
-        <div class="mb-4 md:mb-0">
-            &copy; 2026 Pastor Pashapa Ministry | Marondera, Zimbabwe
-        </div>
-        <div class="flex gap-8 uppercase tracking-widest text-[10px] font-bold">
-            <a href="#" class="hover:text-[#D4AF37]">Facebook</a>
-            <a href="#" class="hover:text-[#D4AF37]">Instagram</a>
-            <span class="text-[#D4AF37]">Designed by ZimWeblify</span>
-        </div>
-    </footer>
+<script>
 
-    <script>
-        // Hero Cross-Fade Script
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.hero-slide');
-        
-        function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
-        }
+// ══════════════════════════════════════════════════════
+// STEP 1: PASTE YOUR SUPABASE DETAILS HERE
+// Get these from: Supabase Dashboard → Project Settings → API
+// ══════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://sbewuydpxfxvahsvgzks.supabase.co;
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZXd1eWRweGZ4dmFoc3ZnemtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzYyMDcsImV4cCI6MjA4NzQxMjIwN30.W4ptQu-EeHpTNKnO-FKtXwFmyA1WUInlREpyGGugGBk';
+// ══════════════════════════════════════════════════════
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        setInterval(nextSlide, 5000);
-    </script>
+// ── BACKGROUND CANVAS ──────────────────────────────────────────────
+(function(){
+  const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+  let W,H,orbs=[],particles=[],rings=[],tokens=[];
+  const G='#00E584',GOLD='#F5B731';
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  window.addEventListener('resize',resize);resize();
+  for(let i=0;i<5;i++) orbs.push({x:Math.random()*W,y:Math.random()*H,r:150+Math.random()*200,dx:(Math.random()-0.5)*0.28,dy:(Math.random()-0.5)*0.28,col:i<3?'rgba(0,229,132,':'rgba(245,183,49,',a:0.04+Math.random()*0.05});
+  for(let i=0;i<50;i++) particles.push({x:Math.random()*W,y:Math.random()*H,r:0.5+Math.random()*1.5,dx:(Math.random()-0.5)*0.12,dy:-0.08-Math.random()*0.22,a:0.1+Math.random()*0.35,col:Math.random()>0.35?G:GOLD});
+  rings=[{cx:0.72,cy:0.22,rx:200,ry:65,angle:0,speed:0.0025,col:G},{cx:0.2,cy:0.72,rx:150,ry:50,angle:Math.PI,speed:-0.002,col:GOLD},{cx:0.88,cy:0.55,rx:110,ry:38,angle:1.2,speed:0.0035,col:G}];
+  tokens=rings.map(()=>({progress:Math.random(),speed:0.0006+Math.random()*0.0005,trail:[]}));
+  let mx=W/2,my=H/2;
+  window.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    orbs.forEach(o=>{
+      o.x+=o.dx+(mx-W/2)*0.00004;o.y+=o.dy+(my-H/2)*0.00004;
+      if(o.x<-o.r)o.x=W+o.r;if(o.x>W+o.r)o.x=-o.r;
+      if(o.y<-o.r)o.y=H+o.r;if(o.y>H+o.r)o.y=-o.r;
+      const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);
+      g.addColorStop(0,o.col+o.a+')');g.addColorStop(1,o.col+'0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();
+    });
+    rings.forEach((r,i)=>{
+      r.angle+=r.speed;
+      ctx.save();ctx.translate(r.cx*W,r.cy*H);ctx.rotate(r.angle);
+      ctx.beginPath();ctx.ellipse(0,0,r.rx,r.ry,0,0,Math.PI*2);
+      ctx.strokeStyle=r.col+'18';ctx.lineWidth=1;ctx.setLineDash([3,10]);ctx.stroke();ctx.setLineDash([]);
+      ctx.restore();
+      const t=tokens[i];t.progress+=t.speed;if(t.progress>1)t.progress=0;
+      const angle=t.progress*Math.PI*2+r.angle;
+      const tx=r.cx*W+Math.cos(angle)*r.rx,ty=r.cy*H+Math.sin(angle)*r.ry;
+      t.trail.push({x:tx,y:ty});
+      if(t.trail.length>20)t.trail.shift();
+      t.trail.forEach((pt,pi)=>{
+        const a=(pi/t.trail.length)*0.3;
+        ctx.beginPath();ctx.arc(pt.x,pt.y,2*(pi/t.trail.length),0,Math.PI*2);
+        ctx.fillStyle=r.col+Math.floor(a*255).toString(16).padStart(2,'0');ctx.fill();
+      });
+      if(t.trail.length>0){
+        const last=t.trail[t.trail.length-1];
+        ctx.beginPath();ctx.arc(last.x,last.y,3.5,0,Math.PI*2);
+        ctx.fillStyle=r.col;ctx.shadowBlur=14;ctx.shadowColor=r.col;ctx.fill();ctx.shadowBlur=0;
+      }
+    });
+    particles.forEach(p=>{
+      p.x+=p.dx;p.y+=p.dy;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W;}
+      if(p.x<0||p.x>W)p.dx*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.col+Math.floor(p.a*255).toString(16).padStart(2,'0');ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
 
+// ── STATE ──────────────────────────────────────────────────────────
+let rate=3.5,convFlipped=false,filterMode='all';
+let requests=[];   // now loaded from Supabase
+let profile=null;  // name+wa, loaded from Supabase (wa key from localStorage)
+let stats={vol:0,deals:0,members:52};
+let waitlistCount=0;
+const isDesktop=()=>window.innerWidth>=900;
+
+// ── SUPABASE: convert DB row → app object ─────────────────────────
+function dbToReq(r){
+  return {
+    id:r.id, name:r.name, wa:r.wa,
+    have:r.have, want:r.want,
+    usd:+r.usd, pln:+r.pln, remUsd:+r.rem_usd,
+    cityZim:r.city_zim||'', cityPl:r.city_pol||'',
+    note:r.note||'', done:r.done||0, flags:r.flags||0,
+    isDemo:r.is_demo||false, ts:r.ts||Date.now()
+  };
+}
+
+// ── STARTUP ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',async()=>{
+  // 1. Fetch live rate (has internal fallback — never crashes)
+  await fetchRate();
+  // 2. Build ALL static HTML first — always runs, no matter what
+  buildAllContent();
+  updateBadges();
+  animateStats();
+  // 3. Load data from Supabase (graceful on bad keys / offline)
+  await loadFromSupabase();
+  // 4. Re-render board with real data
+  renderBoard();updateBadges();animateStats();
+  // 5. Restore profile
+  const savedWa=localStorage.getItem('tm_wa');
+  if(savedWa)await loadProfile(savedWa);
+  if(profile)prefillForm();
+  // 6. Subscribe to realtime (safe no-op if Supabase not configured)
+  subscribeRealtime();
+  // 7. Nav setup
+  setupScrollNav();setupScrollReveal();
+  if(window.location.hash==='#admin'){document.getElementById('adminGate').style.display='block';}
+  window.addEventListener('hashchange',()=>{document.getElementById('adminGate').style.display=window.location.hash==='#admin'?'block':'none';});
+  setInterval(fetchRate,60000);
+  setInterval(animateStats,3000);
+});
+
+window.addEventListener('scroll',()=>document.getElementById('topnav').classList.toggle('scrolled',window.scrollY>20),{passive:true});
+
+async function loadFromSupabase(){
+  try{
+    // Load stats
+    const {data:st}=await sb.from('stats').select('*').eq('id','global').single();
+    if(st)stats={vol:+st.vol||0,deals:+st.deals||0,members:+st.members||52};
+    // Load requests
+    const {data:reqs,error}=await sb.from('requests').select('*').lt('flags',3).gt('rem_usd',0).order('ts',{ascending:false});
+    if(error)throw error;
+    if(reqs&&reqs.length>0){
+      requests=reqs.map(dbToReq);
+    } else {
+      // Seed demo data if table is empty
+      await seedDemo();
+    }
+    // Load waitlist count
+    const {count}=await sb.from('waitlist').select('*',{count:'exact',head:true});
+    waitlistCount=count||0;
+    updateWaitlistUI();
+  }catch(e){
+    console.error('Supabase load error:',e);
+    // If keys aren't configured yet, load local demos so board isn't blank
+    const isPlaceholder=SUPABASE_URL.includes('YOUR_PROJECT_REF');
+    if(isPlaceholder){
+      loadLocalDemos();
+    } else {
+      toast('Connection error — check your internet','err');
+      requests=[];
+    }
+  }
+}
+
+function loadLocalDemos(){
+  requests=[
+    {id:'demo1',name:'Tanya M.',wa:'263771234567',have:'zim',want:'pol',usd:500,pln:1750,remUsd:500,cityZim:'Harare',cityPl:'Warsaw',note:'EcoCash preferred, available today',ts:Date.now()-3600000,done:3,flags:0,isDemo:true},
+    {id:'demo2',name:'Brendan K.',wa:'48501987654',have:'pol',want:'zim',usd:200,pln:700,remUsd:200,cityZim:'Bulawayo',cityPl:'Krakow',note:'Flexible on timing and method',ts:Date.now()-7200000,done:1,flags:0,isDemo:true},
+    {id:'demo3',name:'Simba R.',wa:'263772345678',have:'zim',want:'pol',usd:1000,pln:3500,remUsd:650,cityZim:'Harare',cityPl:'Wroclaw',note:'350 already matched, 650 still open',ts:Date.now()-1800000,done:2,flags:0,isDemo:true},
+    {id:'demo4',name:'Chido N.',wa:'48512876543',have:'pol',want:'zim',usd:150,pln:525,remUsd:150,cityZim:'Mutare',cityPl:'Lublin',note:'Urgent, family needs it today',ts:Date.now()-900000,done:0,flags:0,isDemo:true},
+    {id:'demo5',name:'Farai M.',wa:'263773456789',have:'zim',want:'pol',usd:300,pln:1050,remUsd:300,cityZim:'Gweru',cityPl:'Warsaw',note:'Bank transfer preferred',ts:Date.now()-5400000,done:5,flags:0,isDemo:true}
+  ];
+  stats={vol:4320,deals:28,members:52};
+}
+
+async function loadProfile(wa){
+  try{
+    const {data}=await sb.from('profiles').select('*').eq('wa',wa).single();
+    if(data)profile={name:data.name,wa:data.wa};
+  }catch(e){profile=null;}
+}
+
+function subscribeRealtime(){
+  // Subscribe to requests changes
+  sb.channel('requests-channel')
+    .on('postgres_changes',{event:'*',schema:'public',table:'requests'},async()=>{
+      // On any change, reload from DB and re-render
+      try{
+        const {data:reqs}=await sb.from('requests').select('*').lt('flags',3).gt('rem_usd',0).order('ts',{ascending:false});
+        if(reqs)requests=reqs.map(dbToReq);
+        renderBoard();updateBadges();animateStats();
+      }catch(e){console.error('Realtime reload error:',e);}
+    })
+    .subscribe();
+
+  // Subscribe to stats changes
+  sb.channel('stats-channel')
+    .on('postgres_changes',{event:'*',schema:'public',table:'stats'},async()=>{
+      try{
+        const {data:st}=await sb.from('stats').select('*').eq('id','global').single();
+        if(st){stats={vol:+st.vol||0,deals:+st.deals||0,members:+st.members||52};animateStats();}
+      }catch(e){console.error('Stats realtime error:',e);}
+    })
+    .subscribe();
+}
+
+// ── RATE ────────────────────────────────────────────────────────────
+async function fetchRate(){try{const r=await fetch('https://api.exchangerate-api.com/v4/latest/USD'),d=await r.json();if(d.rates&&d.rates.PLN)rate=d.rates.PLN;}catch(e){rate=3.5;}updateRateDisplays();}
+
+function updateRateDisplays(){
+  const r=rate.toFixed(2);
+  document.querySelectorAll('.js-rate-val').forEach(el=>el.textContent='1 USD = '+r+' PLN');
+  document.querySelectorAll('.js-rate-note').forEach(el=>el.textContent='Live rate: 1 USD = '+r+' PLN');
+  document.querySelectorAll('.calc-card').forEach(card=>{
+    const a=card.querySelector('.cf-input[data-side="a"]');
+    if(a&&a.value){const b=card.querySelector('.cf-input[data-side="b"]');const v=parseFloat(a.value);if(b&&v&&!isNaN(v))b.value=(convFlipped?v/rate:v*rate).toFixed(2);}
+  });
+}
+
+// ── DEMO SEED ──────────────────────────────────────────────────────
+async function seedDemo(){
+  const demos=[
+    {name:'Tanya M.',wa:'263771234567',have:'zim',want:'pol',usd:500,pln:1750,rem_usd:500,city_zim:'Harare',city_pol:'Warsaw',note:'EcoCash preferred, available today',ts:Date.now()-3600000,done:3,flags:0,is_demo:true},
+    {name:'Brendan K.',wa:'48501987654',have:'pol',want:'zim',usd:200,pln:700,rem_usd:200,city_zim:'Bulawayo',city_pol:'Krakow',note:'Flexible on timing and method',ts:Date.now()-7200000,done:1,flags:0,is_demo:true},
+    {name:'Simba R.',wa:'263772345678',have:'zim',want:'pol',usd:1000,pln:3500,rem_usd:650,city_zim:'Harare',city_pol:'Wroclaw',note:'350 already matched, 650 still open',ts:Date.now()-1800000,done:2,flags:0,is_demo:true},
+    {name:'Chido N.',wa:'48512876543',have:'pol',want:'zim',usd:150,pln:525,rem_usd:150,city_zim:'Mutare',city_pol:'Lublin',note:'Urgent, family needs it today',ts:Date.now()-900000,done:0,flags:0,is_demo:true},
+    {name:'Farai M.',wa:'263773456789',have:'zim',want:'pol',usd:300,pln:1050,rem_usd:300,city_zim:'Gweru',city_pol:'Warsaw',note:'Bank transfer preferred',ts:Date.now()-5400000,done:5,flags:0,is_demo:true}
+  ];
+  try{
+    const {data}=await sb.from('requests').insert(demos).select();
+    if(data)requests=data.map(dbToReq);
+    // Set initial stats
+    stats={vol:4320,deals:28,members:52};
+  }catch(e){console.error('Seed error:',e);}
+}
+
+// ── STATS DISPLAY ──────────────────────────────────────────────────
+function animateStats(){
+  const active=requests.filter(r=>r.flags<3&&r.remUsd>0).length;
+  const realUsers=[...new Set(requests.filter(r=>!r.isDemo).map(r=>r.wa))].length;
+  const displayMembers=(stats.members||52)+realUsers;
+  document.querySelectorAll('.js-stat-vol').forEach(el=>el.textContent='$'+Math.floor(stats.vol||0).toLocaleString());
+  document.querySelectorAll('.js-stat-deals').forEach(el=>el.textContent=stats.deals||0);
+  document.querySelectorAll('.js-stat-active').forEach(el=>el.textContent=active);
+  document.querySelectorAll('.js-stat-mem').forEach(el=>el.textContent=displayMembers+'+');
+  updateBadges();
+}
+
+function updateBadges(){
+  const active=requests.filter(r=>r.flags<3&&r.remUsd>0).length;
+  document.querySelectorAll('.mtab-badge').forEach(el=>{if(el)el.textContent=active;});
+}
+
+// ── PROFILE ─────────────────────────────────────────────────────────
+function prefillForm(){
+  if(!profile)return;
+  document.querySelectorAll('[data-field="pName"]').forEach(el=>el.value=profile.name||'');
+  document.querySelectorAll('[data-field="pWa"]').forEach(el=>el.value=profile.wa||'');
+}
+
+function openProfile(){
+  const body=document.getElementById('profileBody');
+  if(!profile){
+    body.innerHTML='<p style="color:var(--tx2);font-size:13px;margin-bottom:14px;">Save your name and WhatsApp once. Auto-fills every time you post.</p><div class="form-grid" style="margin-bottom:10px;"><div class="form-field"><label>Name</label><input type="text" id="prName" placeholder="Tatenda M."></div><div class="form-field"><label>WhatsApp</label><input type="tel" id="prWa" placeholder="+263 77..." inputmode="tel"></div></div><button class="btn-form-primary" onclick="saveProfile()">Save Profile</button>';
+  }else{
+    const myR=requests.filter(r=>r.wa===profile.wa&&!r.isDemo);
+    body.innerHTML='<div style="text-align:center;margin-bottom:18px;"><div class="avatar" style="width:54px;height:54px;font-size:18px;background:var(--gi);color:var(--g);margin:0 auto 10px;border:2px solid rgba(0,229,132,0.2);border-radius:16px;">'+profile.name.slice(0,2).toUpperCase()+'</div><div style="font-size:19px;font-weight:800;">'+escHtml(profile.name)+'</div><div style="font-size:12px;color:var(--mut);margin-top:2px;">'+escHtml(profile.wa)+'</div></div><div style="background:var(--s3);border:1px solid var(--border);border-radius:var(--rsm);padding:14px;margin-bottom:14px;"><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Your active requests</div>'+(myR.length?myR.map(r=>'<div style="font-size:12px;padding:7px 0;border-bottom:1px solid var(--border);color:var(--mut);">'+(r.have==='zim'?'Zimbabwe to Poland':'Poland to Zimbabwe')+' &middot; $'+r.remUsd.toFixed(0)+' remaining &middot; '+ago(r.ts)+'</div>').join(''):'<div style="font-size:12px;color:var(--mut2);">No active requests yet</div>')+'</div><div style="display:flex;gap:8px;"><button class="btn-form-ghost" onclick="clearProfile()">Clear Profile</button><button class="btn-form-primary" onclick="closeModal(\'profileModal\');goPost()">New Request</button></div>';
+  }
+  openModal('profileModal');
+}
+
+async function saveProfile(){
+  const name=(document.getElementById('prName')?.value||'').trim();
+  const wa=(document.getElementById('prWa')?.value||'').trim();
+  if(!name||!wa){toast('Name and WhatsApp are required','err');return;}
+  try{
+    await sb.from('profiles').upsert({wa,name,updated_at:new Date().toISOString()});
+    profile={name,wa};
+    localStorage.setItem('tm_wa',wa);
+    prefillForm();
+    toast('Profile saved','ok');
+    closeModal('profileModal');
+  }catch(e){toast('Could not save profile','err');}
+}
+
+function clearProfile(){
+  if(!confirm('Clear your profile?'))return;
+  profile=null;
+  localStorage.removeItem('tm_wa');
+  toast('Profile cleared','ok');
+  closeModal('profileModal');
+}
+
+// ── WAITLIST ─────────────────────────────────────────────────────────
+async function joinWaitlist(btn){
+  const promo=btn.closest('.card-promo');
+  const emailEl=promo?promo.querySelector('.wl-email-input'):null;
+  if(!emailEl)return;
+  const email=emailEl.value.trim();
+  if(!email||!email.includes('@')){toast('Please enter a valid email','err');return;}
+  try{
+    const {error}=await sb.from('waitlist').insert({email});
+    if(error){
+      if(error.code==='23505'){toast('You are already on the list','err');}
+      else throw error;
+      return;
+    }
+    waitlistCount++;
+    emailEl.value='';
+    updateWaitlistUI();
+    // Bump members count
+    await sb.from('stats').update({members:stats.members+1}).eq('id','global');
+    toast('You are on the waitlist!','ok');
+  }catch(e){toast('Could not join waitlist','err');}
+}
+
+function updateWaitlistUI(){
+  const raised=350+waitlistCount*50;
+  document.querySelectorAll('.crowd-raised').forEach(el=>el.textContent=raised.toLocaleString()+' EUR raised');
+  document.querySelectorAll('.crowd-bar').forEach(el=>el.style.width=Math.min(raised/200,100)+'%');
+}
+
+// ── POST REQUEST ────────────────────────────────────────────────────
+function updatePostDir(sel){
+  const card=sel.closest('.form-card');
+  const lA=card.querySelector('[data-field="pLabelA"]'),lB=card.querySelector('[data-field="pLabelB"]');
+  if(sel.value==='zim'){if(lA)lA.textContent='Amount I have (USD)';if(lB)lB.textContent='Equivalent (PLN)';}
+  else{if(lA)lA.textContent='Amount I have (PLN)';if(lB)lB.textContent='Equivalent (USD)';}
+}
+function postCalcFromA(inp){
+  const card=inp.closest('.form-card'),have=card.querySelector('[data-field="pHave"]').value,v=parseFloat(inp.value);
+  const b=card.querySelector('[data-field="pAmtB"]');if(b)b.value=(!v||isNaN(v))?'':(have==='zim'?v*rate:v/rate).toFixed(0);
+}
+function postCalcFromB(inp){
+  const card=inp.closest('.form-card'),have=card.querySelector('[data-field="pHave"]').value,v=parseFloat(inp.value);
+  const a=card.querySelector('[data-field="pAmtA"]');if(a)a.value=(!v||isNaN(v))?'':(have==='zim'?v/rate:v*rate).toFixed(0);
+}
+
+async function submitPost(btn){
+  const card=btn.closest('.form-card');
+  const name=(card.querySelector('[data-field="pName"]').value||'').trim();
+  const wa=(card.querySelector('[data-field="pWa"]').value||'').trim();
+  const have=card.querySelector('[data-field="pHave"]').value;
+  const amtA=parseFloat(card.querySelector('[data-field="pAmtA"]').value);
+  const cityZim=card.querySelector('[data-field="pCityZim"]').value;
+  const cityPl=card.querySelector('[data-field="pCityPl"]').value;
+  const note=(card.querySelector('[data-field="pNote"]').value||'').trim();
+  if(!name){toast('Please enter your name','err');return;}
+  if(!wa){toast('Please enter your WhatsApp number','err');return;}
+  if(!amtA||amtA<=0){toast('Please enter a valid amount','err');return;}
+  if(!cityZim&&!cityPl){toast('Please select at least one city','err');return;}
+
+  const usd=have==='zim'?amtA:amtA/rate;
+  const pln=have==='zim'?amtA*rate:amtA;
+  const newReq={
+    name, wa, have, want:have==='zim'?'pol':'zim',
+    usd:+usd.toFixed(2), pln:+pln.toFixed(0), rem_usd:+usd.toFixed(2),
+    city_zim:cityZim||'Zimbabwe', city_pol:cityPl||'Poland',
+    note, ts:Date.now(), done:0, flags:0, is_demo:false
+  };
+
+  btn.disabled=true;
+  try{
+    // Insert request
+    const {data:inserted,error}=await sb.from('requests').insert(newReq).select().single();
+    if(error)throw error;
+
+    // Upsert profile
+    await sb.from('profiles').upsert({wa,name,updated_at:new Date().toISOString()});
+    localStorage.setItem('tm_wa',wa);
+    profile={name,wa};
+
+    // Clear form fields
+    document.querySelectorAll('.form-card').forEach(fc=>{
+      ['pName','pWa','pAmtA','pAmtB','pNote'].forEach(f=>{const el=fc.querySelector('[data-field="'+f+'"]');if(el)el.value='';});
+      ['pCityZim','pCityPl'].forEach(f=>{const el=fc.querySelector('[data-field="'+f+'"]');if(el)el.value='';});
+    });
+
+    toast('Your request is live on the board!','ok');
+    goBoard();
+    // Realtime will update the board, but also add locally for instant feedback
+    if(inserted){
+      const localReq=dbToReq(inserted);
+      requests.unshift(localReq);
+      renderBoard();
+      setTimeout(()=>triggerAIMatch(localReq),1800);
+    }
+  }catch(e){
+    console.error('Submit error:',e);
+    toast('Could not post request — check your connection','err');
+  }
+  btn.disabled=false;
+}
+
+// ── MARK DONE / PARTIAL ─────────────────────────────────────────────
+async function markDone(id){
+  const r=requests.find(x=>x.id===id);
+  if(!r||!confirm('Mark '+r.name+"'s request as fully complete?"))return;
+  try{
+    await sb.from('requests').update({rem_usd:0,done:(r.done||0)+1}).eq('id',id);
+    const newVol=+(stats.vol+r.remUsd).toFixed(2);
+    const newDeals=(stats.deals||0)+1;
+    await sb.from('stats').update({vol:newVol,deals:newDeals}).eq('id','global');
+    stats.vol=newVol;stats.deals=newDeals;
+    toast('Exchange marked complete!','ok');
+    // Realtime will update board; also update locally
+    requests=requests.filter(x=>!(x.id===id));
+    renderBoard();animateStats();
+  }catch(e){toast('Could not update — check your connection','err');}
+}
+
+async function markPartial(id){
+  const amt=prompt('How much USD was completed in this partial deal?');
+  if(!amt||isNaN(parseFloat(amt)))return;
+  const r=requests.find(x=>x.id===id);
+  if(!r)return;
+  const done=Math.min(parseFloat(amt),r.remUsd);
+  const newRemUsd=+(r.remUsd-done).toFixed(2);
+  try{
+    await sb.from('requests').update({rem_usd:newRemUsd,done:(r.done||0)+1}).eq('id',id);
+    const newVol=+(stats.vol+done).toFixed(2);
+    const newDeals=(stats.deals||0)+1;
+    await sb.from('stats').update({vol:newVol,deals:newDeals}).eq('id','global');
+    stats.vol=newVol;stats.deals=newDeals;
+    toast('Marked $'+done.toFixed(0)+' as done','ok');
+    r.remUsd=newRemUsd;r.done=(r.done||0)+1;
+    if(newRemUsd<=0)requests=requests.filter(x=>x.id!==id);
+    renderBoard();animateStats();
+  }catch(e){toast('Could not update — check your connection','err');}
+}
+
+// ── FLAG ─────────────────────────────────────────────────────────────
+async function flagReq(id){
+  const r=requests.find(x=>x.id===id);
+  if(!r)return;
+  const newFlags=(r.flags||0)+1;
+  try{
+    await sb.from('requests').update({flags:newFlags}).eq('id',id);
+    r.flags=newFlags;
+    toast(newFlags>=3?'Request hidden after 3 flags':'Flagged ('+newFlags+'/3)',newFlags>=3?'err':'ok');
+    if(newFlags>=3){requests=requests.filter(x=>x.id!==id);}
+    renderBoard();
+  }catch(e){toast('Could not flag — check your connection','err');}
+}
+
+// ── BOARD RENDER ────────────────────────────────────────────────────
+function buildBoardShell(){return '<div>\n  <div class="board-header"><div class="board-title">Live Exchange Board</div><button class="btn-sm btn-sm-green" onclick="goPost()"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" width="10" height="10"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>Post Request</button></div>\n  <div class="board-notice"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15" style="flex-shrink:0;color:var(--g);margin-top:1px"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r="0.5" fill="currentColor"/></svg><div><div class="bn-title">This board is live and working right now</div><div class="bn-body">Cards marked <strong>DEMO</strong> are example posts. Post your own real request to join the community.</div></div></div>\n  <div class="filters board-filters"><div class="filter-pill active" onclick="setFilter(\'all\',this)">All requests</div><div class="filter-pill" onclick="setFilter(\'usd\',this)">🇿🇼 Have USD in Zim</div><div class="filter-pill" onclick="setFilter(\'pln\',this)">🇵🇱 Have PLN in Poland</div></div>\n  <div class="board-list-container"></div>\n  <div style="text-align:center;margin-top:14px;"><button class="btn-sm btn-sm-green" onclick="goPost()" style="padding:12px 24px;border-radius:var(--rsm);font-size:13px;"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.2" width="10" height="10"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg>Post Your Own Request</button></div>\n</div>';}
+
+function renderBoard(){
+  let l=requests.filter(r=>r.flags<3&&r.remUsd>0);
+  if(filterMode==='usd')l=l.filter(r=>r.have==='zim');
+  if(filterMode==='pln')l=l.filter(r=>r.have==='pol');
+  const html=l.length?l.map((r,i)=>buildRequestCard(r,i)).join(''):emptyBoardHTML();
+  document.querySelectorAll('.board-list-container').forEach(c=>c.innerHTML=html);
+  updateBadges();
+}
+
+function setFilter(f,el){
+  filterMode=f;
+  document.querySelectorAll('.board-filters .filter-pill').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.board-filters').forEach(group=>{
+    group.querySelectorAll('.filter-pill').forEach(p=>{
+      if(p.textContent.trim()===el.textContent.trim())p.classList.add('active');
+    });
+  });
+  renderBoard();
+}
+
+const AV_C=['#00E58422','#4F8EF722','#F5B73122','#8B5CF622'],AV_T=['#00E584','#4F8EF7','#F5B731','#8B5CF6'];
+function buildRequestCard(r,idx){
+  const ci=r.name.charCodeAt(0)%AV_C.length,ini=r.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const matches=findMatches(r),hasMatch=matches.length>0,partial=r.remUsd<r.usd;
+  const waNum=r.wa.replace(/\D/g,''),isDemo=r.isDemo===true,plnAmt=(r.remUsd*rate).toFixed(0);
+  return '<div class="rc'+(r.have==='pol'?' type-pln':'')+(hasMatch?' has-match':'')+(isDemo?' demo':'')+'" style="animation-delay:'+idx*0.05+'s">\n    <div class="rc-top"><div class="rc-user"><div class="avatar" style="background:'+AV_C[ci]+';color:'+AV_T[ci]+'">'+ini+'</div><div><div class="rc-name">'+escHtml(r.name)+(isDemo?'<span class="demo-tag">DEMO</span>':'')+'</div><div class="rc-meta">'+ago(r.ts)+(r.done>0?'<span class="trust-tag">&#9733; '+r.done+' done</span>':'')+'</div></div></div><button class="btn-sm btn-sm-ghost" style="font-size:11px;padding:5px 10px;" onclick="flagReq(\''+r.id+'\')">Flag</button></div>\n    <div class="rc-amounts"><div class="ra"><div class="ra-big" style="color:'+(r.have==='zim'?'#00E584':'#4F8EF7')+'">'+(r.have==='zim'?'$'+r.remUsd.toFixed(0)+' USD':'PLN '+plnAmt)+'</div><div class="ra-cur">'+(r.have==='zim'?'&#127566;&#127484; I have in Zimbabwe':'&#127477;&#127473; I have in Poland')+'</div>'+(partial?'<div class="ra-rem">$'+r.remUsd.toFixed(0)+' remaining</div>':'')+'</div><div class="ra-arrow">&#8594;</div><div class="ra"><div class="ra-big" style="color:'+(r.have==='zim'?'#4F8EF7':'#00E584')+'">'+(r.have==='zim'?'PLN '+plnAmt:'$'+r.remUsd.toFixed(0)+' USD')+'</div><div class="ra-cur">'+(r.have==='zim'?'&#127477;&#127473; I want in Poland':'&#127566;&#127484; I want in Zimbabwe')+'</div></div></div>\n    <div class="rc-locs"><div class="loc-pill"><div class="loc-dot" style="background:#00E584"></div>'+escHtml(r.cityZim||'Zimbabwe')+'</div><div class="loc-pill" style="font-size:10px;color:var(--mut2);">&#8594;</div><div class="loc-pill"><div class="loc-dot" style="background:#4F8EF7"></div>'+escHtml(r.cityPl||'Poland')+'</div></div>\n    '+(r.note?'<div style="font-size:12px;color:var(--mut);font-style:italic;margin-bottom:11px;">"'+escHtml(r.note)+'"</div>':'')+'\n    '+(hasMatch?'<div class="match-strip"><div><div class="ms-label">⚡ Match found — connect now</div><div class="ms-sub">Tap See Match to connect on WhatsApp</div></div></div>':'')+'\n    <div class="rc-actions">\n      <a class="btn-sm btn-sm-green" href="https://wa.me/'+waNum+'" target="_blank" rel="noopener"><svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M10 1C5.03 1 1 5.03 1 10c0 1.54.41 2.97 1.12 4.22L1 19l4.9-1.11A9 9 0 1010 1zm4.5 12.25c-.19.54-1.13 1.05-1.54 1.09-.4.04-.78.18-2.62-.55-2.2-.87-3.62-3.1-3.73-3.25-.11-.14-.88-1.17-.88-2.22s.55-1.58.75-1.79c.2-.22.42-.27.57-.27l.4.01c.13 0 .3-.05.47.36.19.43.64 1.56.7 1.68.06.11.09.25.02.38-.08.14-.11.23-.22.35-.11.12-.22.28-.32.37-.11.11-.22.23-.1.44.13.22.57.94 1.22 1.51.83.75 1.54.98 1.76 1.08.22.11.35.09.47-.05.13-.15.54-.63.69-.85.14-.22.28-.18.47-.11.19.07 1.21.57 1.42.68.21.11.35.16.4.24.06.08.06.51-.13 1.06z"/></svg>'+(isDemo?'Demo':'WhatsApp')+'</a>\n      '+(hasMatch?'<button class="btn-sm btn-sm-outline" onclick="openMatchModal(\''+r.id+'\')">See Match</button>':'')+'\n      '+(!isDemo?'<button class="btn-sm btn-sm-ghost" onclick="markPartial(\''+r.id+'\')">Partial</button>':'')+'\n      '+(!isDemo?'<button class="btn-sm btn-sm-red" onclick="markDone(\''+r.id+'\')">Done</button>':'')+'\n    </div>\n  </div>';}
+
+function emptyBoardHTML(){return '<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="2" y="2" width="16" height="16" rx="3"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="10" y1="7" x2="10" y2="13"/></svg></div><h3>No requests yet</h3><p>Be the first to post. The community is ready.</p><button class="btn-sm btn-sm-green" style="margin-top:14px;padding:12px 24px;" onclick="goPost()">Post First Request</button></div>';}
+
+// ── MATCH ───────────────────────────────────────────────────────────
+function findMatches(req){return requests.filter(r=>r.id!==req.id&&r.have===req.want&&r.want===req.have&&r.remUsd>0&&r.flags<3);}
+
+function openMatchModal(reqId){const req=requests.find(r=>r.id===reqId);if(!req)return;triggerAIMatch(req);}
+
+function triggerAIMatch(req){
+  const matches=findMatches(req);if(!matches.length)return;
+  const best=matches[0],canDo=Math.min(req.remUsd,best.remUsd),plnEq=(canDo*rate).toFixed(0),waNum=best.wa.replace(/\D/g,''),isDemo=best.isDemo===true;
+  document.getElementById('matchBody').innerHTML='<p style="color:var(--tx2);font-size:14px;margin-bottom:15px;line-height:1.6">'+(isDemo?'<strong style="color:var(--gold)">This is a demo match. Post your real request to connect with real people.</strong>':'Your request matches someone already on the board. One tap and you are connected on WhatsApp.')+'</p>\n    <div style="background:var(--s3);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:14px;">\n      <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;">'+(isDemo?'Demo party':'Your match')+'</div>\n      <div style="font-size:17px;font-weight:800;margin-bottom:4px;">'+escHtml(best.name)+(isDemo?' <span class="demo-tag">DEMO</span>':'')+'</div>\n      <div style="font-size:12px;color:var(--mut);">'+escHtml(best.cityZim)+' and '+escHtml(best.cityPl)+'</div>\n      '+(best.note?'<div style="font-size:12px;color:var(--mut);margin-top:5px;font-style:italic;">"'+escHtml(best.note)+'"</div>':'')+'\n    </div>\n    <div style="background:var(--gs);border:1px solid rgba(0,229,132,0.2);border-radius:var(--r);padding:18px;margin-bottom:18px;text-align:center;">\n      <div style="font-size:10px;color:var(--g);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Possible deal</div>\n      <div style="font-size:30px;font-weight:800;color:var(--g);letter-spacing:-1.5px;">$'+canDo.toFixed(0)+' / PLN '+plnEq+'</div>\n      <div style="font-size:11px;color:var(--mut);margin-top:5px;">At live rate. 1 USD = '+rate.toFixed(2)+' PLN. Zero fee.</div>\n    </div>\n    <div style="display:flex;gap:8px;">\n      <button class="btn-sm btn-sm-ghost" style="flex:1" onclick="closeModal(\'matchModal\')">Later</button>\n      '+(isDemo?'<button class="btn-sm btn-sm-green" style="flex:2" onclick="closeModal(\'matchModal\');goPost()">Post your real request</button>':'<a class="btn-sm btn-sm-green" style="flex:2;justify-content:center" href="https://wa.me/'+waNum+'" target="_blank" rel="noopener" onclick="closeModal(\'matchModal\')">Connect on WhatsApp</a>')+'\n    </div>';
+  openModal('matchModal');
+}
+
+// ── ADMIN ────────────────────────────────────────────────────────────
+const ADMIN_PW='Tumira2026';
+function adminLogin(){const pw=document.getElementById('adminPw')?.value;if(pw!==ADMIN_PW){toast('Incorrect password','err');return;}document.getElementById('adminGate').style.display='none';document.getElementById('adminDash').classList.add('open');renderAdmin();}
+
+async function renderAdmin(){
+  try{
+    const {data:allReqs}=await sb.from('requests').select('*').order('ts',{ascending:false});
+    const {data:wl}=await sb.from('waitlist').select('email');
+    const {data:st}=await sb.from('stats').select('*').eq('id','global').single();
+    const real=(allReqs||[]).filter(r=>!r.is_demo);
+    const uUsers=[...new Set(real.map(r=>r.wa))].length;
+    const totUsd=real.reduce((s,r)=>s+(+r.usd||0),0);
+    const rows=(allReqs||[]).map(r=>'<tr><td class="bold">'+escHtml(r.name)+(r.is_demo?' <span class="demo-tag">DEMO</span>':'')+'</td><td>'+escHtml(r.wa)+'</td><td style="font-family:var(--fm)">$'+(+r.usd||0).toFixed(0)+'</td><td style="font-family:var(--fm)">$'+(+r.rem_usd||0).toFixed(0)+'</td><td>'+(r.have==='zim'?'Zim to PL':'PL to Zim')+'</td><td>'+(r.done||0)+'</td><td>'+(r.flags||0)+'</td><td><span class="status-badge '+((+r.rem_usd)<=0?'sb-done':r.flags>=3?'sb-flagged':'sb-active')+'">'+((+r.rem_usd)<=0?'Done':r.flags>=3?'Flagged':'Active')+'</span></td><td>'+new Date(r.ts).toLocaleDateString()+'</td><td><button class="btn-sm btn-sm-red" style="font-size:10px;padding:4px 8px;" onclick="adminDelete(\''+r.id+'\')">Del</button></td></tr>').join('');
+    const wlEmails=(wl||[]).map(x=>x.email);
+    document.getElementById('adminContent').innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;"><div style="font-size:19px;font-weight:800;">Admin Dashboard</div><button class="btn-admin" onclick="adminLogout()">Logout</button></div><div class="admin-stats-grid"><div class="asc"><div class="asc-n">'+real.length+'</div><div class="asc-l">Real requests</div></div><div class="asc"><div class="asc-n">'+uUsers+'</div><div class="asc-l">Unique users</div></div><div class="asc"><div class="asc-n">$'+Math.floor(totUsd).toLocaleString()+'</div><div class="asc-l">USD posted</div></div><div class="asc"><div class="asc-n">'+wlEmails.length+'</div><div class="asc-l">Card waitlist</div></div></div>'+(wlEmails.length>0?'<div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:12px;"><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:7px;">Card Waitlist</div><div style="font-size:12px;color:var(--g);font-family:var(--fm);line-height:1.9;">'+wlEmails.join('<br>')+'</div></div>':'')+'<div style="background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:13px;"><div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">All Requests</div>'+((allReqs||[]).length>0?'<div class="admin-table-wrap"><table><tr><th>Name</th><th>WhatsApp</th><th>Amt</th><th>Rem</th><th>Direction</th><th>Done</th><th>Flags</th><th>Status</th><th>Date</th><th></th></tr>'+rows+'</table></div>':'<div style="font-size:13px;color:var(--mut);">No requests yet.</div>')+'</div>';
+  }catch(e){document.getElementById('adminContent').innerHTML='<div style="color:var(--red);padding:20px;">Error loading admin data. Check your connection.</div>';}
+}
+
+async function adminDelete(id){
+  if(!confirm('Delete this request?'))return;
+  try{
+    await sb.from('requests').delete().eq('id',id);
+    requests=requests.filter(r=>r.id!==id);
+    renderBoard();
+    renderAdmin();
+    toast('Request deleted','ok');
+  }catch(e){toast('Could not delete','err');}
+}
+
+function adminLogout(){document.getElementById('adminGate').style.display='block';document.getElementById('adminGate').querySelector('input').value='';document.getElementById('adminDash').classList.remove('open');}
+
+// ── BUILDER FUNCTIONS ────────────────────────────────────────────────
+function buildPostForm(){return '<div class="form-card">\n  <div class="form-header"><div class="form-h">Post a Request</div><div class="form-sub">Free. Takes 60 seconds. Goes live instantly.</div></div>\n  <div class="form-body">\n    <div class="what-happens"><div class="wh-title">What happens after you post</div>\n      <div class="wh-step"><div class="wh-n">1</div><div class="wh-t">Your listing appears on the live board immediately</div></div>\n      <div class="wh-step"><div class="wh-n">2</div><div class="wh-t">If a match exists, you get a <strong>WhatsApp connect button right away.</strong> No match yet? Your post stays live — keep checking, and someone may reach out to you directly.</div></div>\n      <div class="wh-step"><div class="wh-n">3</div><div class="wh-t">Agree the deal directly. Pay locally in your own country.</div></div>\n      <div class="wh-step"><div class="wh-n">4</div><div class="wh-t">Mark done. Your trust score grows with every deal.</div></div>\n    </div>\n    <div class="form-grid"><div class="form-field"><label>Your name</label><input type="text" data-field="pName" placeholder="Tatenda M." maxlength="30"></div><div class="form-field"><label>WhatsApp number</label><input type="tel" data-field="pWa" placeholder="+263 77..." inputmode="tel"></div></div>\n    <div class="form-grid">\n      <div class="form-field"><label>I have money in</label><select data-field="pHave" onchange="updatePostDir(this)"><option value="zim">Zimbabwe (USD / EcoCash)</option><option value="pol">Poland (PLN)</option></select></div>\n      <div class="form-field"><label>I need money in</label><select data-field="pNeed"><option value="pol">Poland (PLN)</option><option value="zim">Zimbabwe (USD)</option></select></div>\n    </div>\n    <div class="form-grid"><div class="form-field"><label data-field="pLabelA">Amount I have (USD)</label><input type="number" data-field="pAmtA" placeholder="500" inputmode="decimal" oninput="postCalcFromA(this)"></div><div class="form-field"><label data-field="pLabelB">Equivalent (PLN)</label><input type="number" data-field="pAmtB" placeholder="auto" inputmode="decimal" oninput="postCalcFromB(this)"></div></div>\n    <div class="form-grid">\n      <div class="form-field"><label>City in Zimbabwe</label><select data-field="pCityZim"><option value="">Select...</option><option>Harare</option><option>Bulawayo</option><option>Mutare</option><option>Gweru</option><option>Masvingo</option><option>Kwekwe</option><option>Other</option></select></div>\n      <div class="form-field"><label>City in Poland</label><select data-field="pCityPl"><option value="">Select...</option><option>Warsaw</option><option>Krakow</option><option>Wroclaw</option><option>Poznan</option><option>Gdansk</option><option>Lublin</option><option>Other</option></select></div>\n    </div>\n    <div class="form-grid one"><div class="form-field"><label>Note (optional)</label><input type="text" data-field="pNote" placeholder="e.g. EcoCash preferred, flexible on timing" maxlength="100"></div></div>\n    <div class="form-notice">By posting you agree to Tumira community rules: be honest, verify the other party before transacting, and transact at your own risk.</div>\n    <div class="form-actions"><button class="btn-form-ghost" onclick="goBoard()">Cancel</button><button class="btn-form-primary" onclick="submitPost(this)">Post Request</button></div>\n  </div>\n</div>';}
+
+function buildCardSection(){return '<div style="margin-bottom:24px;" class="reveal">\n  <div class="card-promo">\n    <div class="card-glow-t"></div><div class="card-glow-b"></div>\n    <span class="cp-eyebrow">Coming Q2 2026</span>\n    <div class="cp-h">The Tumira Card</div>\n    <p class="cp-p">A real Visa debit card with a Polish IBAN. Your family deposits USD cash in Harare. Your card account tops up instantly with zero fees. Spend PLN in Warsaw the same day.</p>\n    <div class="card-phases">\n      <div class="cphase"><div class="cphase-n">Phase 1</div><div class="cphase-t">Zim to your card</div><div class="cphase-p">Someone in Zimbabwe sends money into your Tumira card account. Tops up instantly with zero fees. Spend PLN anywhere in Poland.</div></div>\n      <div class="cphase"><div class="cphase-n">Phase 2</div><div class="cphase-t">Send back home</div><div class="cphase-p">From the same card, send money back to Zimbabwe. One card, both directions, zero fees. Your family receives it instantly.</div></div>\n    </div>\n    <div class="wl-form"><input class="wl-input wl-email-input" type="email" placeholder="Enter your email to join the waitlist" inputmode="email"><button class="btn-gold" onclick="joinWaitlist(this)">Join the Waitlist</button></div>\n    <div class="perks"><div class="perk">0% fee</div><div class="perk">Polish IBAN</div><div class="perk">Instant top-up</div><div class="perk">Works in Zim and SA</div><div class="perk">Visa card</div><div class="perk">Send both ways</div></div>\n  </div>\n  <div class="progress-card">\n    <div class="prog-h">Help Us Build This</div>\n    <p class="prog-p">Early supporters get lifetime premium: free card and free transfers forever. Any amount earns you founding member status.</p>\n    <div class="progress-bar"><div class="progress-fill crowd-bar" style="width:7%"></div></div>\n    <div class="progress-meta"><span class="crowd-raised">350 EUR raised</span><span>Goal: 20,000 EUR</span></div>\n    <button class="btn-gold" onclick="toast(\'Redirecting to payment (demo mode)\',\'ok\')">Become a Founding Member from 50 EUR</button>\n  </div>\n</div>';}
+
+function buildVision(){return '<div class="vision-card reveal">\n  <div class="vision-glow"></div>\n  <div class="vision-eyebrow">Our Vision</div>\n  <div class="vision-h">Building the financial bridge between Africa and Europe</div>\n  <p class="vision-p">Tumira started with one simple mission: <strong>why should Zimbabweans pay 10 to 15% to move their own money?</strong> We are building a community-powered alternative that gives every cent back to the people who earned it.</p>\n  <div class="vision-phases">\n    <div class="vphase"><div class="vphase-dot vp-live"></div><div class="vphase-content"><div class="vphase-h">Community Exchange Board <span class="tag-live">Live Now</span></div><div class="vphase-p">P2P matching, live board, trust scores. Zero fees. Working today, right now.</div></div></div>\n    <div class="vphase"><div class="vphase-dot vp-next"></div><div class="vphase-content"><div class="vphase-h">Tumira Card and Polish IBAN <span class="tag-soon">Q2 2026</span></div><div class="vphase-p">Deposit USD in Harare. Card tops up instantly. Spend PLN in Warsaw the same day. Then send money home from the same card.</div></div></div>\n    <div class="vphase"><div class="vphase-dot vp-future"></div><div class="vphase-content"><div class="vphase-h">All Africa to Europe</div><div class="vphase-p">Zambia, Nigeria, Kenya. 25 or more European countries. The financial infrastructure that Africa deserves.</div></div></div>\n  </div>\n  <p style="font-size:13px;color:var(--mut);line-height:1.6;margin-top:4px;">We are not a bank. We are a community. And we are just getting started.</p>\n</div>';}
+
+function buildHero(){return '<div class="hero"><div class="hero-inner">\n  <div class="hero-pill"><div class="pill-icon"><div class="pdot"></div></div><span class="pill-txt">Live and Working Now. Zimbabwe to Poland and Back.</span></div>\n  <h1 class="hero-title">Move money.<br><span class="g">Zero fees.</span></h1>\n  <p class="hero-sub">The community platform connecting <strong>Zimbabweans</strong> in Zimbabwe and Poland to move money between them. Both directions. Always at the live rate.</p>\n  <div class="problem-strip">\n    <div class="prob-icon">15%</div>\n    <div class="prob-text"><strong>Transfer fees are up to 15% today</strong>Banks, Western Union, even Wise all take a cut. That is up to $75 gone on every $500 you send. Your family loses money before it even arrives.</div>\n  </div>\n  <div class="hero-ctas">\n    <button class="btn-hero-primary" onclick="goPost()"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>Post Now and Get Cash Today</button>\n    <button class="btn-hero-secondary" onclick="goBoard()"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><rect x="1" y="1" width="12" height="12" rx="2"/><path d="M4 4h6M4 7h4M4 10h5"/></svg>Browse the Live Board</button>\n  </div>\n  <div class="quick-nav">\n    <button class="qpill" onclick="isDesktop()?navTo(\'s-calc\'):switchMobileTab(\'calc\')">&#128200; Calculator</button>\n    <button class="qpill" onclick="goBoard()">&#128203; Live Board</button>\n    <button class="qpill" onclick="isDesktop()?navTo(\'s-how\'):switchMobileTab(\'home\')">&#9673; How It Works</button>\n    <button class="qpill" onclick="isDesktop()?navTo(\'s-card\'):switchMobileTab(\'more\')">&#128179; Tumira Card</button>\n    <button class="qpill" onclick="isDesktop()?navTo(\'s-vision\'):switchMobileTab(\'more\')">&#9650; Our Vision</button>\n  </div>\n  <div class="rate-ticker"><div class="rt-inner">\n    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" width="11" height="11" style="color:var(--g)"><path d="M1 6h10M8 3l3 3-3 3"/></svg>\n    <span class="rt-rate js-rate-val">1 USD = '+rate.toFixed(2)+' PLN</span>\n    <div class="rt-badge">0% Tumira fee</div>\n  </div></div>\n</div></div>';}
+
+function buildStats(){return '<div class="stats-row">\n  <div class="stat-card"><div class="stat-num js-stat-vol">$0</div><div class="stat-lbl">Value moved</div></div>\n  <div class="stat-card"><div class="stat-num js-stat-deals">0</div><div class="stat-lbl">Deals done</div></div>\n  <div class="stat-card"><div class="stat-num js-stat-active">0</div><div class="stat-lbl">Open requests</div></div>\n  <div class="stat-card"><div class="stat-num js-stat-mem">0</div><div class="stat-lbl">Members</div></div>\n</div>';}
+
+function buildHIW(){return '<div class="hiw-card reveal">\n  <div class="hiw-head"><div class="hiw-title">No bank. No wire. Just community.</div><div class="hiw-sub">Zimbabweans in Zimbabwe and Poland swap value directly. Each person pays locally. Each person receives locally. Nothing crosses a border.</div></div>\n  <div class="who-row">\n    <div class="who"><div class="who-flag">&#127566;&#127484;</div><div class="who-label">In Zimbabwe</div><div class="who-desc">Have USD or EcoCash. Need to send money to Poland.</div></div>\n    <div class="who"><div class="who-flag">&#127477;&#127473;</div><div class="who-label">In Poland</div><div class="who-desc">Have PLN. Need family to receive money back home.</div></div>\n  </div>\n  <div class="steps-list">\n    <div class="step"><div class="step-num-col"><div class="step-num">1</div><div class="step-line"></div></div><div class="step-body"><div class="step-h">Post what you have and what you need</div><div class="step-p">I have <strong>$500 USD in Harare</strong> and need PLN in Warsaw. Goes live instantly, for free.</div></div></div>\n    <div class="step"><div class="step-num-col"><div class="step-num">2</div><div class="step-line"></div></div><div class="step-body"><div class="step-h">We find your match</div><div class="step-p">Someone needs the opposite. <strong>They have PLN in Warsaw and need USD in Harare.</strong> The match surfaces immediately.</div></div></div>\n    <div class="step"><div class="step-num-col"><div class="step-num">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-h">Connect directly on WhatsApp</div><div class="step-p">One tap. Agree the amount, timing, and method. <strong>EcoCash, bank transfer, or cash</strong> all accepted.</div></div></div>\n    <div class="step"><div class="step-num-col"><div class="step-num">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-h">Pay locally. Receive locally.</div><div class="step-p">You pay your counterpart in your country. They pay theirs. <strong>No international wire ever happens.</strong> Money arrives in hours.</div></div></div>\n    <div class="step"><div class="step-num-col"><div class="step-num">5</div></div><div class="step-body"><div class="step-h">Build trust, unlock faster matches</div><div class="step-p">Every completed deal builds your reputation. <strong>More trust means faster matches</strong> every time you return.</div></div></div>\n  </div>\n</div>';}
+
+function buildCalc(){return '<div class="calc-card reveal">\n  <div class="calc-head"><div class="calc-title">See exactly what your money becomes</div><div class="calc-sub">Live interbank rate. Tumira charges you nothing.</div></div>\n  <div class="calc-body">\n    <div class="calc-field"><div class="cf-flag calc-flag-a">&#127566;&#127484;</div><input class="cf-input" data-side="a" type="number" placeholder="500" inputmode="decimal"><div class="cf-code calc-code-a">USD</div></div>\n    <div class="calc-mid"><button class="swap-btn calc-swap" type="button" aria-label="Swap currencies"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 3l-3 3 3 3M12 13l3-3-3-3"/><line x1="1" y1="6" x2="15" y2="6"/><line x1="1" y1="10" x2="15" y2="10"/></svg></button></div>\n    <div class="calc-field"><div class="cf-flag calc-flag-b">&#127477;&#127473;</div><input class="cf-input" data-side="b" type="number" placeholder="auto" inputmode="decimal"><div class="cf-code calc-code-b">PLN</div></div>\n  </div>\n  <div class="calc-foot"><div class="calc-rate-note js-rate-note">Live rate: 1 USD = '+rate.toFixed(2)+' PLN</div><div class="zero-badge"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" width="8" height="8"><path d="M1.5 5.5l2.5 2.5 4.5-5"/></svg>0% fee</div></div>\n</div>';}
+
+function wireCalc(){
+  if(window._calcWired)return; window._calcWired=true;
+  document.addEventListener('input',function(e){
+    const t=e.target;if(!t.classList.contains('cf-input'))return;
+    const card=t.closest('.calc-card');if(!card)return;
+    const side=t.dataset.side,v=parseFloat(t.value);
+    if(side==='a'){const b=card.querySelector('.cf-input[data-side="b"]');if(b)b.value=(!v||isNaN(v))?'':(convFlipped?v/rate:v*rate).toFixed(2);}
+    if(side==='b'){const a=card.querySelector('.cf-input[data-side="a"]');if(a)a.value=(!v||isNaN(v))?'':(convFlipped?v*rate:v/rate).toFixed(2);}
+  });
+  document.addEventListener('click',function(e){
+    const s=e.target.closest('.calc-swap');if(!s)return;
+    convFlipped=!convFlipped;
+    document.querySelectorAll('.calc-card').forEach(card=>{
+      card.querySelector('.calc-flag-a').innerHTML=convFlipped?'&#127477;&#127473;':'&#127566;&#127484;';
+      card.querySelector('.calc-flag-b').innerHTML=convFlipped?'&#127566;&#127484;':'&#127477;&#127473;';
+      card.querySelector('.calc-code-a').textContent=convFlipped?'PLN':'USD';
+      card.querySelector('.calc-code-b').textContent=convFlipped?'USD':'PLN';
+      card.querySelector('.cf-input[data-side="a"]').value='';
+      card.querySelector('.cf-input[data-side="b"]').value='';
+    });
+  });
+}
+
+function wirePostForm(){}
+
+function buildAllContent(){
+  const h=buildHero(),s=buildStats(),hiw=buildHIW(),c=buildCalc(),b=buildBoardShell(),p=buildPostForm(),cd=buildCardSection(),v=buildVision();
+  document.getElementById('m-hero').innerHTML=h;
+  document.getElementById('m-stats').innerHTML=s;
+  document.getElementById('m-hiw').innerHTML=hiw;
+  document.getElementById('m-calc').innerHTML='<div style="margin-bottom:10px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g)">Rate Calculator</div>'+c;
+  document.getElementById('m-board').innerHTML=b;
+  document.getElementById('m-post').innerHTML=p;
+  document.getElementById('m-card').innerHTML=cd;
+  document.getElementById('m-vision').innerHTML=v;
+  document.getElementById('s-hero').innerHTML=h+s;
+  document.getElementById('s-how').innerHTML='<div class="reveal" style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:14px;">How It Works</div>'+hiw;
+  document.getElementById('s-calc').innerHTML='<div class="reveal" style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--g);margin-bottom:14px;">Rate Calculator</div>'+c;
+  document.getElementById('s-board').innerHTML=b;
+  document.getElementById('s-post').innerHTML=p;
+  document.getElementById('s-card').innerHTML=cd;
+  document.getElementById('s-vision').innerHTML=v;
+  wireCalc();wirePostForm();
+  if(profile)prefillForm();
+  if(isDesktop())setupScrollReveal();
+}
+
+// ── NAV ──────────────────────────────────────────────────────────────
+function switchMobileTab(tab){const map={home:'mob-home',calc:'mob-calc',board:'mob-board',post:'mob-post',more:'mob-more'};Object.keys(map).forEach(k=>{const sec=document.getElementById(map[k]),btn=document.getElementById('mtab-'+k);if(sec)sec.classList.toggle('active',k===tab);if(btn)btn.classList.toggle('active',k===tab);});window.scrollTo({top:0,behavior:'smooth'});if(tab==='board')renderBoard();}
+function navTo(id,linkEl){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));if(linkEl)linkEl.classList.add('active');}
+function goBoard(){if(isDesktop())navTo('s-board');else switchMobileTab('board');}
+function goPost(){if(isDesktop())navTo('s-post');else switchMobileTab('post');}
+
+// ── SCROLL UTILS ──────────────────────────────────────────────────────
+function setupScrollReveal(){
+  if(!isDesktop())return;
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>{
+    // If already in viewport when page loads, show immediately
+    const rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight&&rect.bottom>0){el.classList.add('visible');}
+    else{obs.observe(el);}
+  });
+}
+function setupScrollNav(){if(!isDesktop())return;const sections=['s-hero','s-how','s-calc','s-board','s-post','s-card','s-vision'],links=document.querySelectorAll('.nav-link');window.addEventListener('scroll',()=>{let c=0;sections.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<120)c=i;});links.forEach((l,i)=>l.classList.toggle('active',i===c));},{passive:true});}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function closeBG(e,id){if(e.target.id===id)closeModal(id);}
+function toast(msg,type='ok'){const root=document.getElementById('toast-root'),t=document.createElement('div');t.className='toast '+type;t.textContent=msg;root.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';t.style.transition='all 0.26s';setTimeout(()=>t.remove(),260);},3200);}
+function ago(ts){const d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(m/60);if(m<2)return'just now';if(m<60)return m+'m ago';if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}
+function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+</script>
 </body>
 </html>
