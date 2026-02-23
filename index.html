@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastor Pashapa | Spreading the Word in Marondera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --grace-gold: #D4AF37;
+            --peace-white: #FCFBF7;
+            --faith-dark: #1C1C1C;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--peace-white);
+            color: var(--faith-dark);
+            margin: 0;
+            line-height: 1.6;
+        }
+        .serif { font-family: 'Crimson Pro', serif; }
+        
+        /* Smooth Navigation */
+        .nav-blur {
+            background: rgba(252, 251, 247, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* Hero Cross-Fade */
+        .hero-container {
+            position: relative;
+            height: 85vh;
+            overflow: hidden;
+        }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-overlay {
+            background: linear-gradient(to bottom, rgba(28,28,28,0.4), rgba(28,28,28,0.8));
+        }
+
+        /* Call to Action Pulse */
+        .btn-grace {
+            background-color: var(--grace-gold);
+            transition: all 0.3s ease;
+        }
+        .btn-grace:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-blur fixed w-full top-0 z-[1000] px-6 py-4 lg:px-20 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <img src="https://i.imgur.com/Gxj0Xmi.jpeg" alt="Pastor Pashapa Logo" class="h-12 w-12 rounded-full border-2 border-[#D4AF37]">
+            <span class="serif font-bold text-xl tracking-tight">Pastor Pashapa</span>
+        </div>
+        <div class="hidden md:flex gap-8 text-xs uppercase tracking-[2px] font-semibold">
+            <a href="#home" class="hover:text-[#D4AF37] transition-colors">The Word</a>
+            <a href="#about" class="hover:text-[#D4AF37] transition-colors">Mission</a>
+            <a href="#gallery" class="hover:text-[#D4AF37] transition-colors">Community</a>
+            <a href="#contact" class="hover:text-[#D4AF37] transition-colors">Contact</a>
+        </div>
+        <a href="https://wa.me/263773196614" class="btn-grace text-white px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Connect</a>
+    </nav>
+
+    <header id="home" class="hero-container">
+        <div class="hero-slide active" style="background-image: url('https://i.imgur.com/AJU01Ee.jpeg');"></div>
+        <div class="hero-slide" style="background-image: url('https://i.imgur.com/J7oJWet.jpeg');"></div>
+        <div class="hero-slide" style="background-image: url('https://i.imgur.com/nz1j4pQ.jpeg');"></div>
+        <div class="hero-slide" style="background-image: url('https://i.imgur.com/tnr3PT5.jpeg');"></div>
+
+        <div class="hero-overlay absolute inset-0 z-10 flex items-center justify-center text-center px-6">
+            <div class="max-w-3xl">
+                <p class="text-[#D4AF37] serif italic text-xl md:text-2xl mb-6">
+                    "Delight yourself in the Lord always, and He will give you the desires of your heart."
+                </p>
+                <h1 class="serif text-5xl md:text-7xl text-white font-bold mb-8">
+                    Walking in Faith,<br>Serving Marondera
+                </h1>
+                <div class="h-1 w-24 bg-[#D4AF37] mx-auto mb-8"></div>
+                <a href="#about" class="inline-block border-2 border-white text-white px-10 py-4 text-xs font-bold uppercase tracking-[3px] hover:bg-white hover:text-black transition-all">Learn More</a>
+            </div>
+        </div>
+    </header>
+
+    <section id="about" class="py-24 px-6 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div>
+            <span class="text-[#D4AF37] font-bold uppercase tracking-[4px] text-xs">Our Higher Purpose</span>
+            <h2 class="serif text-4xl md:text-5xl font-bold mt-4 mb-6">Making a Difference Through Christ</h2>
+            <p class="text-gray-600 mb-6 text-lg">
+                Pastor Pashapa is dedicated to the spiritual growth of Marondera. By spreading the transformative power of God's word, he seeks to build a community rooted in love, compassion, and unwavering faith.
+            </p>
+            <p class="text-gray-600 mb-8">
+                Through local outreach, mentorship, and biblical teaching, our ministry focuses on bringing the light of Christ to every home, ensuring that no one walks their journey alone.
+            </p>
+            <div class="border-l-4 border-[#D4AF37] pl-6 py-2 italic text-gray-500">
+                "His mission is simple: to make the love of Jesus known and felt in every corner of our city."
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <img src="https://i.imgur.com/iTKfzWb.jpeg" class="rounded-lg shadow-xl mt-8">
+            <img src="https://i.imgur.com/0M9KBe3.jpeg" class="rounded-lg shadow-xl">
+        </div>
+    </section>
+
+    <section class="bg-[#f2eee3] py-24 px-6 lg:px-20">
+        <div class="text-center mb-16">
+            <h2 class="serif text-4xl font-bold mb-4">How We Serve</h2>
+            <div class="h-1 w-16 bg-[#D4AF37] mx-auto"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
+                <div class="text-3xl mb-6">📖</div>
+                <h3 class="serif text-2xl font-bold mb-4">Word Study</h3>
+                <p class="text-sm text-gray-500">Deep diving into the scriptures to find guidance for modern living.</p>
+            </div>
+            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
+                <div class="text-3xl mb-6">🙏</div>
+                <h3 class="serif text-2xl font-bold mb-4">Community Prayer</h3>
+                <p class="text-sm text-gray-500">Lifting our hearts together to intercede for our families and our nation.</p>
+            </div>
+            <div class="bg-white p-10 rounded-2xl shadow-sm text-center">
+                <div class="text-3xl mb-6">🤝</div>
+                <h3 class="serif text-2xl font-bold mb-4">Marondera Outreach</h3>
+                <p class="text-sm text-gray-500">Practical support and spiritual counseling for those in need.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="py-24 px-6 lg:px-20">
+        <h2 class="serif text-center text-4xl font-bold mb-16">Ministry Moments</h2>
+        <div class="columns-1 md:columns-3 gap-4 space-y-4">
+            <img src="https://i.imgur.com/AJU01Ee.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+            <img src="https://i.imgur.com/J7oJWet.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+            <img src="https://i.imgur.com/nz1j4pQ.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+            <img src="https://i.imgur.com/tnr3PT5.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+            <img src="https://i.imgur.com/iTKfzWb.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+            <img src="https://i.imgur.com/0M9KBe3.jpeg" class="rounded-lg hover:opacity-90 transition-opacity">
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 px-6 lg:px-20 bg-[#1C1C1C] text-white text-center">
+        <h2 class="serif text-5xl font-bold mb-8">Join Our Fellowship</h2>
+        <p class="text-gray-400 mb-12 max-w-2xl mx-auto text-lg">
+            Whether you need prayer, guidance, or simply want to learn more about Christ, Pastor Pashapa is here for you in Marondera.
+        </p>
+        <div class="flex flex-col md:flex-row justify-center gap-6 mb-12">
+            <a href="https://wa.me/263773196614" class="bg-[#25D366] text-white px-10 py-4 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-transform">
+                <span>WhatsApp Pastor</span>
+            </a>
+            <a href="tel:+263773196614" class="bg-white text-black px-10 py-4 rounded-full font-bold flex items-center justify-center gap-3 hover:scale-105 transition-transform">
+                <span>Call Directly</span>
+            </a>
+        </div>
+        <p class="text-[#D4AF37] serif italic text-xl">"God bless you and keep you."</p>
+    </section>
+
+    <footer class="py-12 px-6 lg:px-20 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm">
+        <div class="mb-4 md:mb-0">
+            &copy; 2026 Pastor Pashapa Ministry | Marondera, Zimbabwe
+        </div>
+        <div class="flex gap-8 uppercase tracking-widest text-[10px] font-bold">
+            <a href="#" class="hover:text-[#D4AF37]">Facebook</a>
+            <a href="#" class="hover:text-[#D4AF37]">Instagram</a>
+            <span class="text-[#D4AF37]">Designed by ZimWeblify</span>
+        </div>
+    </footer>
+
+    <script>
+        // Hero Cross-Fade Script
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 5000);
+    </script>
+
+</body>
+</html>
